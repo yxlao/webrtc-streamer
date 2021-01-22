@@ -7,18 +7,19 @@
 **
 ** -------------------------------------------------------------------------*/
 
-
 #ifdef HAVE_LIVE555
 
 #include "rtc_base/logging.h"
 
 #include "fileaudiocapturer.h"
 
-FileAudioSource::FileAudioSource(rtc::scoped_refptr<webrtc::AudioDecoderFactory> audioDecoderFactory, const std::string & uri, const std::map<std::string,std::string> & opts) 
-				: LiveAudioSource(audioDecoderFactory, uri, opts, true) {
-	RTC_LOG(INFO) << "FileAudioSource " << uri ;					
+FileAudioSource::FileAudioSource(
+        rtc::scoped_refptr<webrtc::AudioDecoderFactory> audioDecoderFactory,
+        const std::string& uri,
+        const std::map<std::string, std::string>& opts)
+    : LiveAudioSource(audioDecoderFactory, uri, opts, true) {
+    RTC_LOG(INFO) << "FileAudioSource " << uri;
 }
 
-FileAudioSource::~FileAudioSource()  { 
-}
+FileAudioSource::~FileAudioSource() {}
 #endif

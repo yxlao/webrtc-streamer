@@ -13,22 +13,18 @@
 
 #include "rtspvideocapturer.h"
 
-RTSPVideoCapturer::RTSPVideoCapturer(const std::string & uri, const std::map<std::string,std::string> & opts) 
-	: LiveVideoSource(uri, opts, false)
-{
-	RTC_LOG(INFO) << "RTSPVideoCapturer " << uri ;
-
+RTSPVideoCapturer::RTSPVideoCapturer(
+        const std::string& uri, const std::map<std::string, std::string>& opts)
+    : LiveVideoSource(uri, opts, false) {
+    RTC_LOG(INFO) << "RTSPVideoCapturer " << uri;
 }
 
-RTSPVideoCapturer::~RTSPVideoCapturer()
-{
-}
-
+RTSPVideoCapturer::~RTSPVideoCapturer() {}
 
 void RTSPVideoCapturer::onError(RTSPConnection& connection, const char* error) {
-	RTC_LOG(LS_ERROR) << "RTSPVideoCapturer:onError url:" << m_liveclient.getUrl() <<  " error:" << error;
-	connection.start(1);
-}		
-
+    RTC_LOG(LS_ERROR) << "RTSPVideoCapturer:onError url:"
+                      << m_liveclient.getUrl() << " error:" << error;
+    connection.start(1);
+}
 
 #endif

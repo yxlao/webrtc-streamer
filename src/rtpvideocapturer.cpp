@@ -13,21 +13,16 @@
 
 #include "rtpvideocapturer.h"
 
-RTPVideoCapturer::RTPVideoCapturer(const std::string & uri, const std::map<std::string,std::string> & opts) 
-	: LiveVideoSource(uri, opts, false)
-{
-	RTC_LOG(INFO) << "RTSPVideoCapturer " << uri ;
-
+RTPVideoCapturer::RTPVideoCapturer(
+        const std::string& uri, const std::map<std::string, std::string>& opts)
+    : LiveVideoSource(uri, opts, false) {
+    RTC_LOG(INFO) << "RTSPVideoCapturer " << uri;
 }
 
-RTPVideoCapturer::~RTPVideoCapturer()
-{
-}
-
+RTPVideoCapturer::~RTPVideoCapturer() {}
 
 void RTPVideoCapturer::onError(SDPClient& connection, const char* error) {
-	RTC_LOG(LS_ERROR) << "RTPVideoCapturer:onError error:" << error;
-}		
-
+    RTC_LOG(LS_ERROR) << "RTPVideoCapturer:onError error:" << error;
+}
 
 #endif

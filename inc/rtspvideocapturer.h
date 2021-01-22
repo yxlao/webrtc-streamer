@@ -13,25 +13,24 @@
 
 #include "livevideosource.h"
 
+class RTSPVideoCapturer : public LiveVideoSource<RTSPConnection> {
+public:
+    RTSPVideoCapturer(const std::string& uri,
+                      const std::map<std::string, std::string>& opts);
+    virtual ~RTSPVideoCapturer();
 
-class RTSPVideoCapturer : public LiveVideoSource<RTSPConnection>
-{
-	public:
-		RTSPVideoCapturer(const std::string & uri, const std::map<std::string,std::string> & opts);
-		virtual ~RTSPVideoCapturer();
+    static RTSPVideoCapturer* Create(
+            const std::string& url,
+            const std::map<std::string, std::string>& opts) {
+        return new RTSPVideoCapturer(url, opts);
+    }
 
-		static RTSPVideoCapturer* Create(const std::string & url, const std::map<std::string, std::string> & opts) {
-			return new RTSPVideoCapturer(url, opts);
-		}
-		
-		// overide RTSPConnection::Callback
-		virtual void    onConnectionTimeout(RTSPConnection& connection) override {
-				connection.start();
-		}
-		virtual void    onDataTimeout(RTSPConnection& connection) override {
-				connection.start();
-		}
-		virtual void    onError(RTSPConnection& connection,const char* erro) override;
+    // overide RTSPConnection::Callback
+    virtual void onConnectionTimeout(RTSPConnection& connection) override {
+        connection.start();
+    }
+    virtual void onDataTimeout(RTSPConnection& connection) override {
+        connection.start();
+    }
+    virtual void onError(RTSPConnection& connection, const char* erro) override;
 };
-
-

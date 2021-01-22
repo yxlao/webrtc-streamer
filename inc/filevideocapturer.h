@@ -13,15 +13,15 @@
 
 #include "livevideosource.h"
 
-class FileVideoCapturer : public LiveVideoSource<MKVClient>
-{
-	public:
-		FileVideoCapturer(const std::string & uri, const std::map<std::string,std::string> & opts);
-		virtual ~FileVideoCapturer();
-	
-		static FileVideoCapturer* Create(const std::string & url, const std::map<std::string, std::string> & opts) {
-			return new FileVideoCapturer(url, opts);
-		}
+class FileVideoCapturer : public LiveVideoSource<MKVClient> {
+public:
+    FileVideoCapturer(const std::string& uri,
+                      const std::map<std::string, std::string>& opts);
+    virtual ~FileVideoCapturer();
+
+    static FileVideoCapturer* Create(
+            const std::string& url,
+            const std::map<std::string, std::string>& opts) {
+        return new FileVideoCapturer(url, opts);
+    }
 };
-
-

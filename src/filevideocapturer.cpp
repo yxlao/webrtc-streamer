@@ -13,15 +13,12 @@
 
 #include "filevideocapturer.h"
 
-FileVideoCapturer::FileVideoCapturer(const std::string & uri, const std::map<std::string,std::string> & opts) 
-	: LiveVideoSource(uri, opts, true)
-{
-	RTC_LOG(INFO) << "FileVideoCapturer " << uri ;
+FileVideoCapturer::FileVideoCapturer(
+        const std::string& uri, const std::map<std::string, std::string>& opts)
+    : LiveVideoSource(uri, opts, true) {
+    RTC_LOG(INFO) << "FileVideoCapturer " << uri;
 }
 
-FileVideoCapturer::~FileVideoCapturer()
-{	
-}
-
+FileVideoCapturer::~FileVideoCapturer() {}
 
 #endif

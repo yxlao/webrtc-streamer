@@ -4,7 +4,7 @@
 ** any purpose.
 **
 ** HttpServerRequestHandler.h
-** 
+**
 ** -------------------------------------------------------------------------*/
 
 #pragma once
@@ -16,16 +16,15 @@
 #include "json/json.h"
 #include "CivetServer.h"
 
-
 /* ---------------------------------------------------------------------------
 **  http callback
 ** -------------------------------------------------------------------------*/
-class HttpServerRequestHandler : public CivetServer
-{
-	public:
-		typedef std::function<Json::Value(const struct mg_request_info *req_info, const Json::Value &)> httpFunction;
-	
-		HttpServerRequestHandler(std::map<std::string,httpFunction>& func, const std::vector<std::string>& options); 
+class HttpServerRequestHandler : public CivetServer {
+public:
+    typedef std::function<Json::Value(const struct mg_request_info* req_info,
+                                      const Json::Value&)>
+            httpFunction;
+
+    HttpServerRequestHandler(std::map<std::string, httpFunction>& func,
+                             const std::vector<std::string>& options);
 };
-
-

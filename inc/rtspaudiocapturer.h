@@ -16,17 +16,21 @@
 #include "liveaudiosource.h"
 
 class RTSPAudioSource : public LiveAudioSource<RTSPConnection> {
-	public:
-		static rtc::scoped_refptr<RTSPAudioSource> Create(rtc::scoped_refptr<webrtc::AudioDecoderFactory> audioDecoderFactory, const std::string & uri, const std::map<std::string,std::string> & opts) {
-			rtc::scoped_refptr<RTSPAudioSource> source(new rtc::RefCountedObject<RTSPAudioSource>(audioDecoderFactory, uri, opts));
-			return source;
-		}
-		
-	protected:
-		RTSPAudioSource(rtc::scoped_refptr<webrtc::AudioDecoderFactory> audioDecoderFactory, const std::string & uri, const std::map<std::string,std::string> & opts); 
-		virtual ~RTSPAudioSource();
+public:
+    static rtc::scoped_refptr<RTSPAudioSource> Create(
+            rtc::scoped_refptr<webrtc::AudioDecoderFactory> audioDecoderFactory,
+            const std::string& uri,
+            const std::map<std::string, std::string>& opts) {
+        rtc::scoped_refptr<RTSPAudioSource> source(
+                new rtc::RefCountedObject<RTSPAudioSource>(audioDecoderFactory,
+                                                           uri, opts));
+        return source;
+    }
 
+protected:
+    RTSPAudioSource(
+            rtc::scoped_refptr<webrtc::AudioDecoderFactory> audioDecoderFactory,
+            const std::string& uri,
+            const std::map<std::string, std::string>& opts);
+    virtual ~RTSPAudioSource();
 };
-
-
-

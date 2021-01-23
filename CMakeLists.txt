@@ -123,14 +123,12 @@ if(NOT EXISTS ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/args.gn)
     endif()
 
     # sound support
-    if(NOT WIN32)
-        if(NOT PulseAudio_FOUND)
-            set(WEBRTCARGS rtc_include_pulse_audio=false\n${WEBRTCARGS})
-        endif()
-        if(NOT ALSA_FOUND)
-            set(WEBRTCARGS
-                rtc_include_internal_audio_device=false\n${WEBRTCARGS})
-        endif()
+    if(NOT PulseAudio_FOUND)
+        set(WEBRTCARGS rtc_include_pulse_audio=false\n${WEBRTCARGS})
+    endif()
+    if(NOT ALSA_FOUND)
+        set(WEBRTCARGS
+            rtc_include_internal_audio_device=false\n${WEBRTCARGS})
     endif()
 
     # compilation mode depending on target
@@ -168,9 +166,6 @@ if(NOT
    EXISTS
    ${WEBRTCOBJS}/${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX}
 )
-    if(WIN32)
-        set(SHELLCOMMAND cmd /c)
-    endif()
     execute_process(WORKING_DIRECTORY ${WEBRTCROOT}/src/out/${WEBRTCBUILD}
                     COMMAND ${SHELLCOMMAND} gn gen .)
 
@@ -237,68 +232,44 @@ add_definitions(-DOPENSSL_API_1_1)
 add_definitions(-DHAVE_JPEG)
 
 # compiler specific
-if(WIN32)
-    # webrtc
-    add_definitions(
-        -DWEBRTC_WIN -EHsc -DNOMINMAX -D__PRETTY_FUNCTION__=__FUNCTION__
-        -D_HAS_ITERATOR_DEBUGGING=0)
-    set(CompilerFlags CMAKE_CXX_FLAGS_DEBUG CMAKE_C_FLAGS_DEBUG
-                      CMAKE_CXX_FLAGS_RELEASE CMAKE_C_FLAGS_RELEASE)
-    foreach(CompilerFlag ${CompilerFlags})
-        string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
-    endforeach()
-    add_definitions(-DUSE_X11 -DHAVE_SOUND -D_WINSOCKAPI_)
+add_definitions(-DWEBRTC_POSIX -fno-rtti)
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6.*")
+    target_link_libraries(${PROJECT_NAME} -Wl,-Bstatic -latomic
+                            -Wl,-Bdynamic)
+    add_definitions(-marm -march=armv6 -mfpu=vfp -mfloat-abi=hard)
+endif()
+if(EXISTS
+    ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/obj/modules/desktop_capture/desktop_capture.ninja
+)
+    add_definitions(-DUSE_X11)
     target_link_libraries(
         ${PROJECT_NAME}
-        secur32
-        dmoguids
-        wmcodecdspuuid
-        strmiids
-        msdmo
-        winmm
-        dxgi
-        d3d11)
-else()
-    # webrtc
-    add_definitions(-DWEBRTC_POSIX -fno-rtti)
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6.*")
-        target_link_libraries(${PROJECT_NAME} -Wl,-Bstatic -latomic
-                              -Wl,-Bdynamic)
-        add_definitions(-marm -march=armv6 -mfpu=vfp -mfloat-abi=hard)
+        X11
+        Xext
+        Xdamage
+        Xfixes
+        Xcomposite
+        Xrandr
+        Xtst)
+endif()
+# civetweb
+target_link_libraries(${PROJECT_NAME} dl)
+# alsa
+if(ALSA_FOUND)
+    add_definitions(-DHAVE_SOUND)
+endif()
+# static link of stdc++ if available on arm (raise unresolved symbol on
+# x86-64)
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm.*")
+    include(CheckCXXCompilerFlag)
+    check_cxx_compiler_flag("-static-libgcc" CXX_SUPPORTS_STATIC_LIBGCC)
+    if(CXX_SUPPORTS_STATIC_LIBGCC)
+        target_link_libraries(${PROJECT_NAME} -static-libgcc)
     endif()
-    if(EXISTS
-       ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/obj/modules/desktop_capture/desktop_capture.ninja
-    )
-        add_definitions(-DUSE_X11)
-        target_link_libraries(
-            ${PROJECT_NAME}
-            X11
-            Xext
-            Xdamage
-            Xfixes
-            Xcomposite
-            Xrandr
-            Xtst)
-    endif()
-    # civetweb
-    target_link_libraries(${PROJECT_NAME} dl)
-    # alsa
-    if(ALSA_FOUND)
-        add_definitions(-DHAVE_SOUND)
-    endif()
-    # static link of stdc++ if available on arm (raise unresolved symbol on
-    # x86-64)
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm.*")
-        include(CheckCXXCompilerFlag)
-        check_cxx_compiler_flag("-static-libgcc" CXX_SUPPORTS_STATIC_LIBGCC)
-        if(CXX_SUPPORTS_STATIC_LIBGCC)
-            target_link_libraries(${PROJECT_NAME} -static-libgcc)
-        endif()
-        check_cxx_compiler_flag("-static-libstdc++"
-                                CXX_SUPPORTS_STATIC_LIBSTDCPP)
-        if(CXX_SUPPORTS_STATIC_LIBSTDCPP)
-            target_link_libraries(${PROJECT_NAME} -static-libstdc++)
-        endif()
+    check_cxx_compiler_flag("-static-libstdc++"
+                            CXX_SUPPORTS_STATIC_LIBSTDCPP)
+    if(CXX_SUPPORTS_STATIC_LIBSTDCPP)
+        target_link_libraries(${PROJECT_NAME} -static-libstdc++)
     endif()
 endif()
 

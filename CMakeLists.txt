@@ -213,6 +213,10 @@ set(CIVETWEB_INCLUDE_DIR civetweb/include)
 set(CIVETWEB_LIB_DIR ${CMAKE_BINARY_DIR})
 set(CIVETWEB_LIBRARIES civetweb)
 
+# Dependency: live555helper
+add_subdirectory(live555helper EXCLUDE_FROM_ALL)
+set(LIVE555HELPER_LIBRARIES liblive555helper)
+
 function(set_global_target_properties target)
 
     target_include_directories(${target} PRIVATE SYSTEM
@@ -227,9 +231,15 @@ function(set_global_target_properties target)
 
     target_link_libraries(${target} PRIVATE
         ${WEBRTC_LIBRARIES}
-        Threads::Threads
         ${CIVETWEB_LIBRARIES}
+        ${LIVE555HELPER_LIBRARIES}
+        Threads::Threads
         dl
+    )
+
+    target_compile_definitions(${target} PRIVATE
+        HAVE_LIVE555 # live555helper
+        NO_OPENSSL=1 # live555helper
     )
 
     # compiler specific
@@ -265,11 +275,6 @@ function(set_global_target_properties target)
             target_link_libraries(${target} -static-libstdc++)
         endif()
     endif()
-
-    # live555helper
-    add_subdirectory(live555helper EXCLUDE_FROM_ALL)
-    target_link_libraries(${target} PRIVATE liblive555helper)
-    add_definitions(-DHAVE_LIVE555 -DNO_OPENSSL=1)
 
     # cpack
     install(TARGETS ${target} RUNTIME DESTINATION .)

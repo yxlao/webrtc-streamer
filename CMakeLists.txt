@@ -204,12 +204,12 @@ find_package(Threads REQUIRED)
 
 # Dependency: CivetWeb
 add_library(civetweb STATIC
-    civetweb/src/civetweb.c
-    civetweb/src/CivetServer.cpp
+    ${PROJECT_SOURCE_DIR}/civetweb/src/civetweb.c
+    ${PROJECT_SOURCE_DIR}/civetweb/src/CivetServer.cpp
 )
-target_include_directories(civetweb PRIVATE civetweb/include)
+target_include_directories(civetweb PRIVATE ${PROJECT_SOURCE_DIR}/civetweb/include)
 target_compile_definitions(civetweb PRIVATE OPENSSL_API_1_1)
-set(CIVETWEB_INCLUDE_DIR civetweb/include)
+set(CIVETWEB_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/civetweb/include)
 set(CIVETWEB_LIB_DIR ${CMAKE_BINARY_DIR})
 set(CIVETWEB_LIBRARIES civetweb)
 
@@ -282,8 +282,4 @@ function(set_global_target_properties target)
 
 endfunction()
 
-
-# project target
-file(GLOB SOURCE src/*.cpp)
-add_executable(${PROJECT_NAME} ${SOURCE} ${WEBRTCEXTRAOBJS})
-set_global_target_properties(${PROJECT_NAME})
+add_subdirectory(src)

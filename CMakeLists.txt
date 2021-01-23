@@ -199,31 +199,34 @@ set(WEBRTCEXTRAOBJS
     ${WEBRTCOBJS}/rtc_base/rtc_json/json${CMAKE_C_OUTPUT_EXTENSION})
 
 
+# WebRTC import.
+set(WEBRTC_INCLUDE_DIR
+    ${WEBRTCROOT}/src
+    ${WEBRTCROOT}/src/third_party/abseil-cpp
+    ${WEBRTCROOT}/src/third_party/jsoncpp/source/include
+    ${WEBRTCROOT}/src/third_party/jsoncpp/generated
+    ${WEBRTCROOT}/src/third_party/libyuv/include
+)
+set(WEBRTC_LIB_DIR ${WEBRTCOBJS})
+set(WEBRTC_LIBRARIES ${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX})
+
 function(set_global_target_properties target)
 
-    # webrtc
-    set(WEBRTCINCLUDE
-        ${WEBRTCROOT}/src
-        ${WEBRTCROOT}/src/third_party/abseil-cpp
-        ${WEBRTCROOT}/src/third_party/jsoncpp/source/include
-        ${WEBRTCROOT}/src/third_party/jsoncpp/generated
-        ${WEBRTCROOT}/src/third_party/libyuv/include)
-    target_include_directories(${target} PRIVATE ${WEBRTCINCLUDE})
-    target_link_libraries(
-        ${target}
-        ${WEBRTCOBJS}/${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX}
-    )
+    # WebRTC.
+    target_include_directories(${target} PRIVATE ${WEBRTC_INCLUDE_DIR})
+    target_link_directories(${target} PRIVATE ${WEBRTC_LIB_DIR})
+    target_link_libraries(${target} PRIVATE ${WEBRTC_LIBRARIES})
 
     # thread
     set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
     set(THREADS_PREFER_PTHREAD_FLAG TRUE)
     find_package(Threads)
-    target_link_libraries(${target} Threads::Threads)
+    target_link_libraries(${target} PRIVATE Threads::Threads)
 
     # civetweb
     add_library(civetweb STATIC civetweb/src/civetweb.c
                                 civetweb/src/CivetServer.cpp)
-    target_link_libraries(${target} civetweb)
+    target_link_libraries(${target} PRIVATE civetweb)
     target_include_directories(civetweb PUBLIC civetweb/include)
     add_definitions(-DOPENSSL_API_1_1)
 
@@ -242,6 +245,7 @@ function(set_global_target_properties target)
         add_definitions(-DUSE_X11)
         target_link_libraries(
             ${target}
+            PRIVATE
             X11
             Xext
             Xdamage
@@ -251,7 +255,7 @@ function(set_global_target_properties target)
             Xtst)
     endif()
     # civetweb
-    target_link_libraries(${target} dl)
+    target_link_libraries(${target} PRIVATE dl)
     # alsa
     if(ALSA_FOUND)
         add_definitions(-DHAVE_SOUND)
@@ -273,7 +277,7 @@ function(set_global_target_properties target)
 
     # live555helper
     add_subdirectory(live555helper EXCLUDE_FROM_ALL)
-    target_link_libraries(${target} liblive555helper)
+    target_link_libraries(${target} PRIVATE liblive555helper)
     add_definitions(-DHAVE_LIVE555 -DNO_OPENSSL=1)
 
     # cpack

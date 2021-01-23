@@ -160,7 +160,7 @@ int main(int argc, char* argv[]) {
             case 'h':
             default:
                 std::cout << argv[0]
-                          << " [-H http port] [-S[embeded stun address]] [-t "
+                          << " [-H http port] [-S[embedded stun address]] [-t "
                              "[username:password@]turn_address] -[v[v]]  "
                              "[url1]...[urln]"
                           << std::endl;
@@ -194,7 +194,7 @@ int main(int argc, char* argv[]) {
                           << std::endl;
 
                 std::cout << "\t -S[stun_address]                   : start "
-                             "embeded STUN server bind to address (default "
+                             "embedded STUN server bind to address (default "
                           << defaultlocalstunurl << ")" << std::endl;
                 std::cout << "\t -s[stun_address]                   : use an "
                              "external STUN server (default:"
@@ -203,7 +203,7 @@ int main(int argc, char* argv[]) {
                              "external TURN relay server (default:disabled)"
                           << std::endl;
                 std::cout << "\t -T[username:password@]turn_address : start "
-                             "embeded TURN server (default:disabled)"
+                             "embedded TURN server (default:disabled)"
                           << std::endl;
 
                 std::cout << "\t -a[audio layer]                    : spefify "

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 project(webrtc-streamer)
 
 # WebRTC build
-set(WEBRTCROOT "${CMAKE_CURRENT_SOURCE_DIR}/../webrtc" CACHE STRING "WEBRTC root directory")
+set(WEBRTCROOT "${PROJECT_SOURCE_DIR}/../webrtc" CACHE STRING "WEBRTC root directory")
 set(WEBRTCBUILD "Release" CACHE STRING "WEBRTC build type")
 set(WEBRTCDESKTOPCAPTURE "ON" CACHE STRING "WEBRTC Desktop capture")
 
@@ -69,6 +69,20 @@ message("PulseAudio_FOUND = ${PulseAudio_FOUND}")
 
 # webrtc build
 if(NOT EXISTS ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/args.gn)
+    # Example args.gn
+    # is_clang=true
+    # use_sysroot=false
+    # is_chrome_branded=true
+    # is_debug=false
+    # use_custom_libcxx=false
+    # rtc_include_tests=false
+    # rtc_enable_protobuf=false
+    # rtc_build_examples=false
+    # rtc_build_tools=false
+    # treat_warnings_as_errors=false
+    # rtc_enable_libevent=false
+    # rtc_build_libevent=false
+
     set(WEBRTCARGS
         rtc_include_tests=false\nrtc_enable_protobuf=false\nrtc_build_examples=false\nrtc_build_tools=false\ntreat_warnings_as_errors=false\nrtc_enable_libevent=false\nrtc_build_libevent=false\n
     )

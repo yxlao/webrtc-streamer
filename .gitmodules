@@ -4,6 +4,3 @@
 [submodule "civetweb"]
 	path = civetweb
 	url = https://github.com/civetweb/civetweb
-[submodule "getopt"]
-	path = getopt
-	url = https://github.com/kimgr/getopt_port

@@ -199,7 +199,7 @@ set(WEBRTCEXTRAOBJS
     ${WEBRTCOBJS}/rtc_base/rtc_json/json${CMAKE_C_OUTPUT_EXTENSION})
 
 
-# WebRTC import.
+# Dependency: WebRTC.
 set(WEBRTC_INCLUDE_DIR
     ${WEBRTCROOT}/src
     ${WEBRTCROOT}/src/third_party/abseil-cpp
@@ -210,6 +210,11 @@ set(WEBRTC_INCLUDE_DIR
 set(WEBRTC_LIB_DIR ${WEBRTCOBJS})
 set(WEBRTC_LIBRARIES ${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX})
 
+# Dependency: Thread.
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+
 function(set_global_target_properties target)
 
     # WebRTC.
@@ -218,9 +223,6 @@ function(set_global_target_properties target)
     target_link_libraries(${target} PRIVATE ${WEBRTC_LIBRARIES})
 
     # thread
-    set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-    set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-    find_package(Threads)
     target_link_libraries(${target} PRIVATE Threads::Threads)
 
     # civetweb

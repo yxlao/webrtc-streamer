@@ -201,7 +201,7 @@ set(WEBRTCEXTRAOBJS
 # project target
 file(GLOB SOURCE src/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCE} ${WEBRTCEXTRAOBJS})
-target_include_directories(${PROJECT_NAME} PRIVATE inc)
+target_include_directories(${PROJECT_NAME} PRIVATE src)
 
 # webrtc
 set(WEBRTCINCLUDE

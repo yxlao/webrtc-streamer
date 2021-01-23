@@ -242,6 +242,13 @@ function(set_global_target_properties target)
         NO_OPENSSL=1 # live555helper
     )
 
+    set_target_properties(${target}
+        PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
+    )
+
     # compiler specific
     add_definitions(-DWEBRTC_POSIX -fno-rtti)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6.*")

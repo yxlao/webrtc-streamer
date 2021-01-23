@@ -198,94 +198,100 @@ set(WEBRTCEXTRAOBJS
     ${WEBRTJSONCPPCOBJS} ${WEBRTBBRCOBJS} ${WEBRTP2POBJ} ${WEBRTTASK}
     ${WEBRTCOBJS}/rtc_base/rtc_json/json${CMAKE_C_OUTPUT_EXTENSION})
 
+
+function(set_global_target_properties target)
+
+    # webrtc
+    set(WEBRTCINCLUDE
+        ${WEBRTCROOT}/src
+        ${WEBRTCROOT}/src/third_party/abseil-cpp
+        ${WEBRTCROOT}/src/third_party/jsoncpp/source/include
+        ${WEBRTCROOT}/src/third_party/jsoncpp/generated
+        ${WEBRTCROOT}/src/third_party/libyuv/include)
+    target_include_directories(${target} PRIVATE ${WEBRTCINCLUDE})
+    target_link_libraries(
+        ${target}
+        ${WEBRTCOBJS}/${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX}
+    )
+
+    # thread
+    set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+    set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+    find_package(Threads)
+    target_link_libraries(${target} Threads::Threads)
+
+    # civetweb
+    add_library(civetweb STATIC civetweb/src/civetweb.c
+                                civetweb/src/CivetServer.cpp)
+    target_link_libraries(${target} civetweb)
+    target_include_directories(civetweb PUBLIC civetweb/include)
+    add_definitions(-DOPENSSL_API_1_1)
+
+    add_definitions(-DHAVE_JPEG)
+
+    # compiler specific
+    add_definitions(-DWEBRTC_POSIX -fno-rtti)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6.*")
+        target_link_libraries(${target} -Wl,-Bstatic -latomic
+                                -Wl,-Bdynamic)
+        add_definitions(-marm -march=armv6 -mfpu=vfp -mfloat-abi=hard)
+    endif()
+    if(EXISTS
+        ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/obj/modules/desktop_capture/desktop_capture.ninja
+    )
+        add_definitions(-DUSE_X11)
+        target_link_libraries(
+            ${target}
+            X11
+            Xext
+            Xdamage
+            Xfixes
+            Xcomposite
+            Xrandr
+            Xtst)
+    endif()
+    # civetweb
+    target_link_libraries(${target} dl)
+    # alsa
+    if(ALSA_FOUND)
+        add_definitions(-DHAVE_SOUND)
+    endif()
+    # static link of stdc++ if available on arm (raise unresolved symbol on
+    # x86-64)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm.*")
+        include(CheckCXXCompilerFlag)
+        check_cxx_compiler_flag("-static-libgcc" CXX_SUPPORTS_STATIC_LIBGCC)
+        if(CXX_SUPPORTS_STATIC_LIBGCC)
+            target_link_libraries(${target} -static-libgcc)
+        endif()
+        check_cxx_compiler_flag("-static-libstdc++"
+                                CXX_SUPPORTS_STATIC_LIBSTDCPP)
+        if(CXX_SUPPORTS_STATIC_LIBSTDCPP)
+            target_link_libraries(${target} -static-libstdc++)
+        endif()
+    endif()
+
+    # live555helper
+    add_subdirectory(live555helper EXCLUDE_FROM_ALL)
+    target_link_libraries(${target} liblive555helper)
+    add_definitions(-DHAVE_LIVE555 -DNO_OPENSSL=1)
+
+    # cpack
+    install(TARGETS ${target} RUNTIME DESTINATION .)
+    install(DIRECTORY html DESTINATION .)
+    set(CPACK_GENERATOR "TGZ")
+    set(CPACK_SYSTEM_NAME
+        ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}-${CMAKE_BUILD_TYPE})
+    set(CPACK_PACKAGE_CONTACT "michel.promonet@free.fr")
+    if(PROJECTVERSION)
+        set(CPACK_PACKAGE_VERSION "${PROJECTVERSION}")
+    endif()
+    include(CPack)
+
+endfunction()
+
+
 # project target
 file(GLOB SOURCE src/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCE} ${WEBRTCEXTRAOBJS})
-target_include_directories(${PROJECT_NAME} PRIVATE src)
-
-# webrtc
-set(WEBRTCINCLUDE
-    ${WEBRTCROOT}/src
-    ${WEBRTCROOT}/src/third_party/abseil-cpp
-    ${WEBRTCROOT}/src/third_party/jsoncpp/source/include
-    ${WEBRTCROOT}/src/third_party/jsoncpp/generated
-    ${WEBRTCROOT}/src/third_party/libyuv/include)
-target_include_directories(${PROJECT_NAME} PRIVATE ${WEBRTCINCLUDE})
-target_link_libraries(
-    ${PROJECT_NAME}
-    ${WEBRTCOBJS}/${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX}
-)
-
-# thread
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-find_package(Threads)
-target_link_libraries(${PROJECT_NAME} Threads::Threads)
-
-# civetweb
-add_library(civetweb STATIC civetweb/src/civetweb.c
-                            civetweb/src/CivetServer.cpp)
-target_link_libraries(${PROJECT_NAME} civetweb)
-target_include_directories(civetweb PUBLIC civetweb/include)
-add_definitions(-DOPENSSL_API_1_1)
-
-add_definitions(-DHAVE_JPEG)
-
-# compiler specific
-add_definitions(-DWEBRTC_POSIX -fno-rtti)
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6.*")
-    target_link_libraries(${PROJECT_NAME} -Wl,-Bstatic -latomic
-                            -Wl,-Bdynamic)
-    add_definitions(-marm -march=armv6 -mfpu=vfp -mfloat-abi=hard)
-endif()
-if(EXISTS
-    ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/obj/modules/desktop_capture/desktop_capture.ninja
-)
-    add_definitions(-DUSE_X11)
-    target_link_libraries(
-        ${PROJECT_NAME}
-        X11
-        Xext
-        Xdamage
-        Xfixes
-        Xcomposite
-        Xrandr
-        Xtst)
-endif()
-# civetweb
-target_link_libraries(${PROJECT_NAME} dl)
-# alsa
-if(ALSA_FOUND)
-    add_definitions(-DHAVE_SOUND)
-endif()
-# static link of stdc++ if available on arm (raise unresolved symbol on
-# x86-64)
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm.*")
-    include(CheckCXXCompilerFlag)
-    check_cxx_compiler_flag("-static-libgcc" CXX_SUPPORTS_STATIC_LIBGCC)
-    if(CXX_SUPPORTS_STATIC_LIBGCC)
-        target_link_libraries(${PROJECT_NAME} -static-libgcc)
-    endif()
-    check_cxx_compiler_flag("-static-libstdc++"
-                            CXX_SUPPORTS_STATIC_LIBSTDCPP)
-    if(CXX_SUPPORTS_STATIC_LIBSTDCPP)
-        target_link_libraries(${PROJECT_NAME} -static-libstdc++)
-    endif()
-endif()
-
-# live555helper
-add_subdirectory(live555helper EXCLUDE_FROM_ALL)
-target_link_libraries(${PROJECT_NAME} liblive555helper)
-add_definitions(-DHAVE_LIVE555 -DNO_OPENSSL=1)
-
-# cpack
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION .)
-install(DIRECTORY html DESTINATION .)
-set(CPACK_GENERATOR "TGZ")
-set(CPACK_SYSTEM_NAME
-    ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}-${CMAKE_BUILD_TYPE})
-set(CPACK_PACKAGE_CONTACT "michel.promonet@free.fr")
-if(PROJECTVERSION)
-    set(CPACK_PACKAGE_VERSION "${PROJECTVERSION}")
-endif()
-include(CPack)
+set_global_target_properties(${PROJECT_NAME})

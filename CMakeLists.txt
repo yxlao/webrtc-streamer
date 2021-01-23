@@ -291,14 +291,6 @@ function(set_global_target_properties target)
     # cpack
     install(TARGETS ${target} RUNTIME DESTINATION .)
     install(DIRECTORY html DESTINATION .)
-    set(CPACK_GENERATOR "TGZ")
-    set(CPACK_SYSTEM_NAME
-        ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}-${CMAKE_BUILD_TYPE})
-    set(CPACK_PACKAGE_CONTACT "michel.promonet@free.fr")
-    if(PROJECTVERSION)
-        set(CPACK_PACKAGE_VERSION "${PROJECTVERSION}")
-    endif()
-    include(CPack)
 
 endfunction()
 

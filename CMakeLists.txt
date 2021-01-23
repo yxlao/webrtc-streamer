@@ -238,10 +238,6 @@ add_definitions(-DHAVE_JPEG)
 
 # compiler specific
 if(WIN32)
-    # getopt
-    add_library(getopt getopt/getopt.c)
-    target_include_directories(getopt PUBLIC getopt)
-    target_link_libraries(${PROJECT_NAME} getopt)
     # webrtc
     add_definitions(
         -DWEBRTC_WIN -EHsc -DNOMINMAX -D__PRETTY_FUNCTION__=__FUNCTION__

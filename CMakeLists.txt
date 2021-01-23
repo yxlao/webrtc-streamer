@@ -217,13 +217,18 @@ find_package(Threads REQUIRED)
 
 function(set_global_target_properties target)
 
-    # WebRTC.
-    target_include_directories(${target} PRIVATE ${WEBRTC_INCLUDE_DIR})
-    target_link_directories(${target} PRIVATE ${WEBRTC_LIB_DIR})
-    target_link_libraries(${target} PRIVATE ${WEBRTC_LIBRARIES})
+    target_include_directories(${target} PRIVATE
+        ${WEBRTC_INCLUDE_DIR}
+    )
 
-    # thread
-    target_link_libraries(${target} PRIVATE Threads::Threads)
+    target_link_directories(${target} PRIVATE
+        ${WEBRTC_LIB_DIR}
+    )
+
+    target_link_libraries(${target} PRIVATE
+        ${WEBRTC_LIBRARIES}
+        Threads::Threads
+    )
 
     # civetweb
     add_library(civetweb STATIC civetweb/src/civetweb.c

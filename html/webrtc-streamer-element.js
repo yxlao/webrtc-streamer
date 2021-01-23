@@ -3,14 +3,22 @@ import "./webrtcstreamer.js";
 import "./tensorflow.js";
 
 class WebRTCStreamerElement extends HTMLElement {
-	static get observedAttributes() {
-		return ['url', 'options', 'webrtcurl', 'notitle', 'width', 'height', 'algo'];
-	}  
-	
-	constructor() {
-		super(); 
-		this.shadowDOM = this.attachShadow({mode: 'open'});
-		this.shadowDOM.innerHTML = `
+  static get observedAttributes() {
+    return [
+      "url",
+      "options",
+      "webrtcurl",
+      "notitle",
+      "width",
+      "height",
+      "algo",
+    ];
+  }
+
+  constructor() {
+    super();
+    this.shadowDOM = this.attachShadow({ mode: "open" });
+    this.shadowDOM.innerHTML = `
 					<style>@import "styles.css"</style>
 					<h2 id="title"></h2>
 					<div id="content">
@@ -18,131 +26,137 @@ class WebRTCStreamerElement extends HTMLElement {
 						<canvas id="canvas"></canvas>
 					</div>
 					`;
-		this.initialized = false;
-		this.titleElement = this.shadowDOM.getElementById("title");
-		this.videoElement = this.shadowDOM.getElementById("video");
-		this.canvasElement = this.shadowDOM.getElementById("canvas");
-		this.modelLoaded = [];
-	}
-	connectedCallback() {
-		this.connectStream(true);
-		this.initialized = true;
-	}
-	disconnectedCallback() {
-		this.disconnectStream();
-		this.initialized = false;
-	}
-	attributeChangedCallback(attrName, oldVal, newVal) {
-		if (attrName === "notitle") {
-			this.titleElement.style.visibility = "hidden";
-		} else if (attrName === "width") {
-			this.videoElement.style.width = newVal;
-		} else if (attrName === "height") {
-			this.videoElement.style.height = newVal;
-		} if (this.initialized) {
-			this.connectStream((attrName !== "algo"));
-		}
-	}
-	
-	disconnectStream() {
-		if (this.webRtcServer) {
-			this.webRtcServer.disconnect();
-			this.webRtcServer = null;
-		}
-	}
+    this.initialized = false;
+    this.titleElement = this.shadowDOM.getElementById("title");
+    this.videoElement = this.shadowDOM.getElementById("video");
+    this.canvasElement = this.shadowDOM.getElementById("canvas");
+    this.modelLoaded = [];
+  }
+  connectedCallback() {
+    this.connectStream(true);
+    this.initialized = true;
+  }
+  disconnectedCallback() {
+    this.disconnectStream();
+    this.initialized = false;
+  }
+  attributeChangedCallback(attrName, oldVal, newVal) {
+    if (attrName === "notitle") {
+      this.titleElement.style.visibility = "hidden";
+    } else if (attrName === "width") {
+      this.videoElement.style.width = newVal;
+    } else if (attrName === "height") {
+      this.videoElement.style.height = newVal;
+    }
+    if (this.initialized) {
+      this.connectStream(attrName !== "algo");
+    }
+  }
 
-	connectStream(reconnect) {
-		
-		const webrtcurl = this.getAttribute("webrtcurl");
+  disconnectStream() {
+    if (this.webRtcServer) {
+      this.webRtcServer.disconnect();
+      this.webRtcServer = null;
+    }
+  }
 
-		let videostream;
-		let audiostream;
+  connectStream(reconnect) {
+    const webrtcurl = this.getAttribute("webrtcurl");
 
-		const url = this.getAttribute("url");
-		if (url) {
-			try {
-				let urljson = JSON.parse(url);
-				videostream = urljson.video;
-				audiostream = urljson.audio;
-			} catch (e) {
-				videostream = url;
-			}
-			
-			const notitle = this.getAttribute("notitle");
-			if (notitle === null) {
-				this.titleElement.innerHTML = videostream; 
-			}
-			this.videoElement.title = videostream;
+    let videostream;
+    let audiostream;
 
-			// stop running algo
-			Object.values(this.modelLoaded).forEach( promise => {
-				if (promise.model) {
-					promise.model.run = null; 
-				} 
-			});
+    const url = this.getAttribute("url");
+    if (url) {
+      try {
+        let urljson = JSON.parse(url);
+        videostream = urljson.video;
+        audiostream = urljson.audio;
+      } catch (e) {
+        videostream = url;
+      }
 
-			let imgLoaded;
-			if (reconnect) {
-				this.disconnectStream();
-				this.webRtcServer = new WebRtcStreamer(this.videoElement, webrtcurl);
-				this.webRtcServer.connect(videostream, audiostream, this.getAttribute("options"));
+      const notitle = this.getAttribute("notitle");
+      if (notitle === null) {
+        this.titleElement.innerHTML = videostream;
+      }
+      this.videoElement.title = videostream;
 
-				imgLoaded = new Promise( (resolve,rejet) => {
-					this.videoElement.addEventListener('loadeddata', (event) => { 
-						resolve(event)
-					});
-				} );
-			} else {
-				imgLoaded = new Promise( (resolve) => resolve() );
-			}
+      // stop running algo
+      Object.values(this.modelLoaded).forEach((promise) => {
+        if (promise.model) {
+          promise.model.run = null;
+        }
+      });
 
-			let modelLoaded = this.getModelPromise(this.getAttribute("algo"));
-		
-			Promise.all([imgLoaded, modelLoaded]).then(([event,model]) => {	
-				this.setVideoSize(this.videoElement.videoWidth, this.videoElement.videoHeight)
+      let imgLoaded;
+      if (reconnect) {
+        this.disconnectStream();
+        this.webRtcServer = new WebRtcStreamer(this.videoElement, webrtcurl);
+        this.webRtcServer.connect(
+          videostream,
+          audiostream,
+          this.getAttribute("options")
+        );
 
-				if (model) {
-					model.run = modelLoaded.run;
-					model.run(model, this.videoElement, this.canvasElement)
-					modelLoaded.model = model;
-				}
-			});			
-		}
-	}	
+        imgLoaded = new Promise((resolve, rejet) => {
+          this.videoElement.addEventListener("loadeddata", (event) => {
+            resolve(event);
+          });
+        });
+      } else {
+        imgLoaded = new Promise((resolve) => resolve());
+      }
 
-	setVideoSize(width, height) {
-		this.videoElement.width = width;
-		this.videoElement.height = height;
+      let modelLoaded = this.getModelPromise(this.getAttribute("algo"));
 
-		this.canvasElement.width = width;
-		this.canvasElement.height = height;
-	}
+      Promise.all([imgLoaded, modelLoaded]).then(([event, model]) => {
+        this.setVideoSize(
+          this.videoElement.videoWidth,
+          this.videoElement.videoHeight
+        );
 
-	getModelPromise(algo) {
-		let modelLoaded;
-		if (this.modelLoaded[algo]) {
-			modelLoaded = this.modelLoaded[algo];
-		}
-		else {
-			if (algo === "posenet") {
-				modelLoaded = posenet.load();
-				modelLoaded.run = runPosenet;
-			} else if (algo === "deeplab") {
-				modelLoaded = deeplab.load()
-				modelLoaded.run = runDeeplab;
-			} else if (algo === "cocossd") {
-				modelLoaded = cocoSsd.load();
-				modelLoaded.run = runDetect;
-			} else if (algo === "bodyPix") {
-				modelLoaded = bodyPix.load();
-				modelLoaded.run = runbodyPix;
-			} else {
-				modelLoaded = new Promise( (resolve) => resolve() );
-			}
-			this.modelLoaded[algo] = modelLoaded;
-		} 
-		return modelLoaded;
-	}
+        if (model) {
+          model.run = modelLoaded.run;
+          model.run(model, this.videoElement, this.canvasElement);
+          modelLoaded.model = model;
+        }
+      });
+    }
+  }
+
+  setVideoSize(width, height) {
+    this.videoElement.width = width;
+    this.videoElement.height = height;
+
+    this.canvasElement.width = width;
+    this.canvasElement.height = height;
+  }
+
+  getModelPromise(algo) {
+    let modelLoaded;
+    if (this.modelLoaded[algo]) {
+      modelLoaded = this.modelLoaded[algo];
+    } else {
+      if (algo === "posenet") {
+        modelLoaded = posenet.load();
+        modelLoaded.run = runPosenet;
+      } else if (algo === "deeplab") {
+        modelLoaded = deeplab.load();
+        modelLoaded.run = runDeeplab;
+      } else if (algo === "cocossd") {
+        modelLoaded = cocoSsd.load();
+        modelLoaded.run = runDetect;
+      } else if (algo === "bodyPix") {
+        modelLoaded = bodyPix.load();
+        modelLoaded.run = runbodyPix;
+      } else {
+        modelLoaded = new Promise((resolve) => resolve());
+      }
+      this.modelLoaded[algo] = modelLoaded;
+    }
+    return modelLoaded;
+  }
 }
 
-customElements.define('webrtc-streamer', WebRTCStreamerElement);
+customElements.define("webrtc-streamer", WebRTCStreamerElement);

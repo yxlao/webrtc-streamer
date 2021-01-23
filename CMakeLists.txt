@@ -242,21 +242,16 @@ function(set_global_target_properties target)
         ${WEBRTC_LIBRARIES}
         Threads::Threads
         ${CIVETWEB_LIBRARIES}
+        dl
     )
-
-    # ?
-    add_definitions(-DHAVE_JPEG)
 
     # compiler specific
     add_definitions(-DWEBRTC_POSIX -fno-rtti)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6.*")
-        target_link_libraries(${target} -Wl,-Bstatic -latomic
-                                -Wl,-Bdynamic)
+        target_link_libraries(${target} -Wl,-Bstatic -latomic -Wl,-Bdynamic)
         add_definitions(-marm -march=armv6 -mfpu=vfp -mfloat-abi=hard)
     endif()
-    if(EXISTS
-        ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/obj/modules/desktop_capture/desktop_capture.ninja
-    )
+    if(EXISTS ${WEBRTCOBJS}/modules/desktop_capture/desktop_capture.ninja)
         add_definitions(-DUSE_X11)
         target_link_libraries(
             ${target}
@@ -269,8 +264,6 @@ function(set_global_target_properties target)
             Xrandr
             Xtst)
     endif()
-    # civetweb
-    target_link_libraries(${target} PRIVATE dl)
     # alsa
     if(ALSA_FOUND)
         add_definitions(-DHAVE_SOUND)

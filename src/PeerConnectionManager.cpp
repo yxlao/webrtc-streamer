@@ -186,12 +186,7 @@ PeerConnectionManager::PeerConnectionManager(
         const std::string &webrtcUdpPortRange)
     : m_audioDecoderfactory(webrtc::CreateBuiltinAudioDecoderFactory()),
       m_task_queue_factory(webrtc::CreateDefaultTaskQueueFactory()),
-#ifdef HAVE_SOUND
-      m_audioDeviceModule(webrtc::AudioDeviceModule::Create(
-              audioLayer, m_task_queue_factory.get())),
-#else
       m_audioDeviceModule(new webrtc::FakeAudioDeviceModule()),
-#endif
       m_peer_connection_factory(webrtc::CreateModularPeerConnectionFactory(
               CreatePeerConnectionFactoryDependencies(m_audioDeviceModule,
                                                       m_audioDecoderfactory))),

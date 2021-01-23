@@ -59,14 +59,6 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64")
 endif()
 message("CMAKE_FIND_ROOT_PATH = ${CMAKE_FIND_ROOT_PATH}")
 
-# alsa ?
-find_package(ALSA QUIET)
-message("ALSA_FOUND = ${ALSA_FOUND}")
-
-# pulse ?
-find_package(PulseAudio QUIET)
-message("PulseAudio_FOUND = ${PulseAudio_FOUND}")
-
 # webrtc build
 if(NOT EXISTS ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/args.gn)
     # Example args.gn
@@ -123,13 +115,8 @@ if(NOT EXISTS ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/args.gn)
     endif()
 
     # sound support
-    if(NOT PulseAudio_FOUND)
-        set(WEBRTCARGS rtc_include_pulse_audio=false\n${WEBRTCARGS})
-    endif()
-    if(NOT ALSA_FOUND)
-        set(WEBRTCARGS
-            rtc_include_internal_audio_device=false\n${WEBRTCARGS})
-    endif()
+    set(WEBRTCARGS rtc_include_pulse_audio=false\n${WEBRTCARGS})
+    set(WEBRTCARGS rtc_include_internal_audio_device=false\n${WEBRTCARGS})
 
     # compilation mode depending on target
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6.*")
@@ -263,10 +250,6 @@ function(set_global_target_properties target)
             Xcomposite
             Xrandr
             Xtst)
-    endif()
-    # alsa
-    if(ALSA_FOUND)
-        add_definitions(-DHAVE_SOUND)
     endif()
     # static link of stdc++ if available on arm (raise unresolved symbol on
     # x86-64)

@@ -35,8 +35,7 @@ void sighandler(int n) {
 **  main
 ** -------------------------------------------------------------------------*/
 int main(int argc, char* argv[]) {
-    const char* defaultlocalturnurl = "turn:turn@0.0.0.0:3478";
-    const char* stunurl = "stun.l.google.com:19302";
+    const char* stun_url = "stun.l.google.com:19302";
     std::string defaultWebrtcUdpPortRange = "0:65535";
     std::string localWebrtcUdpPortRange = "";
     int logLevel = rtc::LERROR;
@@ -47,9 +46,9 @@ int main(int argc, char* argv[]) {
     std::string publishFilter(".*");
     Json::Value config;
 
-    std::string httpAddress("localhost:8888");
+    std::string http_address("localhost:8888");
     if (argc > 1) {
-        httpAddress = std::string(argv[1]);
+        http_address = std::string(argv[1]);
     }
 
     std::cout << "Version:" << VERSION << std::endl;
@@ -66,8 +65,8 @@ int main(int argc, char* argv[]) {
 
     // webrtc server
     std::list<std::string> iceServerList;
-    if ((strlen(stunurl) != 0) && (strcmp(stunurl, "-") != 0)) {
-        iceServerList.push_back(std::string("stun:") + stunurl);
+    if ((strlen(stun_url) != 0) && (strcmp(stun_url, "-") != 0)) {
+        iceServerList.push_back(std::string("stun:") + stun_url);
     }
 
     webRtcServer =
@@ -87,7 +86,7 @@ int main(int argc, char* argv[]) {
         options.push_back("access_control_allow_origin");
         options.push_back("*");
         options.push_back("listening_ports");
-        options.push_back(httpAddress);
+        options.push_back(http_address);
         options.push_back("enable_keep_alive");
         options.push_back("yes");
         options.push_back("keep_alive_timeout_ms");
@@ -96,7 +95,7 @@ int main(int argc, char* argv[]) {
         try {
             std::map<std::string, HttpServerRequestHandler::httpFunction> func =
                     webRtcServer->getHttpApi();
-            std::cout << "HTTP Listen at " << httpAddress << std::endl;
+            std::cout << "HTTP Listen at " << http_address << std::endl;
             HttpServerRequestHandler httpServer(func, options);
 
             // mainloop

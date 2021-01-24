@@ -43,13 +43,9 @@ int main(int argc, char* argv[]) {
     std::string localWebrtcUdpPortRange = "";
     int logLevel = rtc::LERROR;
     const char* webroot = "./html";
-    std::string sslCertificate;
     webrtc::AudioDeviceModule::AudioLayer audioLayer =
             webrtc::AudioDeviceModule::kPlatformDefaultAudio;
     std::string streamName;
-    std::string nbthreads;
-    std::string passwdFile;
-    std::string authDomain = "mydomain.com";
     std::string publishFilter(".*");
     Json::Value config;
 
@@ -101,20 +97,6 @@ int main(int argc, char* argv[]) {
         options.push_back("yes");
         options.push_back("keep_alive_timeout_ms");
         options.push_back("1000");
-        if (!sslCertificate.empty()) {
-            options.push_back("ssl_certificate");
-            options.push_back(sslCertificate);
-        }
-        if (!nbthreads.empty()) {
-            options.push_back("num_threads");
-            options.push_back(nbthreads);
-        }
-        if (!passwdFile.empty()) {
-            options.push_back("global_auth_file");
-            options.push_back(passwdFile);
-            options.push_back("authentication_domain");
-            options.push_back(authDomain);
-        }
 
         try {
             std::map<std::string, HttpServerRequestHandler::httpFunction> func =

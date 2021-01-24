@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
         std::map<std::string, HttpServerRequestHandler::httpFunction> func =
                 webrtc_server->getHttpApi();
         std::cout << "HTTP Listen at " << http_address << std::endl;
-        HttpServerRequestHandler httpServer(func, options);
+        HttpServerRequestHandler civet_server(func, options);
 
         // Main loop.
         signal(SIGINT, SignalHandler);

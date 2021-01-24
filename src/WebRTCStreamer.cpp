@@ -36,15 +36,10 @@ void sighandler(int n) {
 ** -------------------------------------------------------------------------*/
 int main(int argc, char* argv[]) {
     const char* stun_url = "stun.l.google.com:19302";
-    std::string defaultWebrtcUdpPortRange = "0:65535";
-    std::string localWebrtcUdpPortRange = "";
-    int logLevel = rtc::LERROR;
     const char* webroot = "./html";
+    Json::Value config;  // E.g. stores additional resource URLs.
     webrtc::AudioDeviceModule::AudioLayer audioLayer =
             webrtc::AudioDeviceModule::kPlatformDefaultAudio;
-    std::string streamName;
-    std::string publishFilter(".*");
-    Json::Value config;
 
     std::string http_address("localhost:8888");
     if (argc > 1) {
@@ -52,9 +47,8 @@ int main(int argc, char* argv[]) {
     }
 
     std::cout << "Version:" << VERSION << std::endl;
-    std::cout << config;
 
-    rtc::LogMessage::LogToDebug((rtc::LoggingSeverity)logLevel);
+    rtc::LogMessage::LogToDebug((rtc::LoggingSeverity)rtc::LERROR);
     rtc::LogMessage::LogTimestamps();
     rtc::LogMessage::LogThreads();
     std::cout << "Logger level:" << rtc::LogMessage::GetLogToDebug()
@@ -69,9 +63,8 @@ int main(int argc, char* argv[]) {
         iceServerList.push_back(std::string("stun:") + stun_url);
     }
 
-    webRtcServer =
-            new PeerConnectionManager(iceServerList, config["urls"], audioLayer,
-                                      publishFilter, localWebrtcUdpPortRange);
+    webRtcServer = new PeerConnectionManager(iceServerList, config["urls"],
+                                             audioLayer, ".*", "");
     if (!webRtcServer->InitializePeerConnection()) {
         std::cout << "Cannot Initialize WebRTC server" << std::endl;
     } else {

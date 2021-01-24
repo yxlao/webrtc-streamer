@@ -283,10 +283,6 @@ function(set_global_target_properties target)
         endif()
     endif()
 
-    # cpack
-    install(TARGETS ${target} RUNTIME DESTINATION .)
-    install(DIRECTORY html DESTINATION .)
-
 endfunction()
 
 add_subdirectory(src)

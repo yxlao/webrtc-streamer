@@ -249,6 +249,14 @@ function(set_global_target_properties target)
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
     )
 
+    # TODO: Enable
+    # target_compile_options(${target} PRIVATE
+    #     $<$<COMPILE_LANGUAGE:C>:$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX ${DISABLE_MSVC_WARNINGS}>>
+    #     $<$<COMPILE_LANGUAGE:C>:$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang,Intel>:-Wall -Werror>>
+    #     $<$<COMPILE_LANGUAGE:CXX>:$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX ${DISABLE_MSVC_WARNINGS}>>
+    #     $<$<COMPILE_LANGUAGE:CXX>:$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang,Intel>:-Wall -Werror>>
+    # )
+
     # compiler specific
     add_definitions(-DWEBRTC_POSIX -fno-rtti)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6.*")

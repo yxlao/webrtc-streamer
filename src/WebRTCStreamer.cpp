@@ -36,7 +36,6 @@ void sighandler(int n) {
 ** -------------------------------------------------------------------------*/
 int main(int argc, char* argv[]) {
     const char* turnurl = "";
-    const char* defaultlocalstunurl = "0.0.0.0:3478";
     const char* defaultlocalturnurl = "turn:turn@0.0.0.0:3478";
     const char* stunurl = "stun.l.google.com:19302";
     std::string defaultWebrtcUdpPortRange = "0:65535";

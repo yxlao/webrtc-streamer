@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
     if (webrtc_server->InitializePeerConnection()) {
         std::cout << "InitializePeerConnection() succeeded." << std::endl;
     } else {
-        std::cout << "InitializePeerConnection() failed." << std::endl;
+        throw std::runtime_error("InitializePeerConnection() failed.");
     }
 
     // CivetWeb http server.

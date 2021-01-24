@@ -14,16 +14,16 @@
 #include "VcmCapturer.h"
 
 #ifdef HAVE_LIVE555
-#include "rtspvideocapturer.h"
-#include "rtpvideocapturer.h"
-#include "filevideocapturer.h"
-#include "rtspaudiocapturer.h"
-#include "fileaudiocapturer.h"
+#include "RTSPVideoCapturer.h"
+#include "RTPVideoCapturer.h"
+#include "FileVideoCapturer.h"
+#include "RTSPAudioCapturer.h"
+#include "FileAudioCapturer.h"
 #endif
 
 #ifdef USE_X11
-#include "screencapturer.h"
-#include "windowcapturer.h"
+#include "ScreenCapturer.h"
+#include "WindowCapturer.h"
 #endif
 
 #include "pc/video_track_source.h"

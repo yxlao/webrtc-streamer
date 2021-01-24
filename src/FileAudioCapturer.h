@@ -3,7 +3,7 @@
 ** support, and with no warranty, express or implied, as to its usefulness for
 ** any purpose.
 **
-** rtspaudiocapturer.h
+** RTSPAudioCapturer.h
 **
 ** -------------------------------------------------------------------------*/
 
@@ -13,7 +13,7 @@
 
 #include "mkvclient.h"
 
-#include "liveaudiosource.h"
+#include "LiveAudioSource.h"
 
 class FileAudioSource : public LiveAudioSource<MKVClient> {
 public:

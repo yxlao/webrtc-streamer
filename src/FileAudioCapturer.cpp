@@ -11,7 +11,7 @@
 
 #include "rtc_base/logging.h"
 
-#include "fileaudiocapturer.h"
+#include "FileAudioCapturer.h"
 
 FileAudioSource::FileAudioSource(
         rtc::scoped_refptr<webrtc::AudioDecoderFactory> audioDecoderFactory,

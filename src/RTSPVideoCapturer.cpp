@@ -3,7 +3,7 @@
 ** support, and with no warranty, express or implied, as to its usefulness for
 ** any purpose.
 **
-** filevideocapturer.cpp
+** rtspvideocapturer.cpp
 **
 ** -------------------------------------------------------------------------*/
 
@@ -11,14 +11,20 @@
 
 #include "rtc_base/logging.h"
 
-#include "filevideocapturer.h"
+#include "RTSPVideoCapturer.h"
 
-FileVideoCapturer::FileVideoCapturer(
+RTSPVideoCapturer::RTSPVideoCapturer(
         const std::string& uri, const std::map<std::string, std::string>& opts)
-    : LiveVideoSource(uri, opts, true) {
-    RTC_LOG(INFO) << "FileVideoCapturer " << uri;
+    : LiveVideoSource(uri, opts, false) {
+    RTC_LOG(INFO) << "RTSPVideoCapturer " << uri;
 }
 
-FileVideoCapturer::~FileVideoCapturer() {}
+RTSPVideoCapturer::~RTSPVideoCapturer() {}
+
+void RTSPVideoCapturer::onError(RTSPConnection& connection, const char* error) {
+    RTC_LOG(LS_ERROR) << "RTSPVideoCapturer:onError url:"
+                      << m_liveclient.getUrl() << " error:" << error;
+    connection.start(1);
+}
 
 #endif

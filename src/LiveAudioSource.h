@@ -3,7 +3,7 @@
 ** support, and with no warranty, express or implied, as to its usefulness for
 ** any purpose.
 **
-** liveaudiosource.h
+** LiveAudioSource.h
 **
 ** -------------------------------------------------------------------------*/
 

@@ -3,7 +3,7 @@
 ** support, and with no warranty, express or implied, as to its usefulness for
 ** any purpose.
 **
-** rtspvideocapturer.h
+** RTSPVideoCapturer.h
 **
 ** -------------------------------------------------------------------------*/
 
@@ -11,7 +11,7 @@
 
 #include "rtspconnectionclient.h"
 
-#include "livevideosource.h"
+#include "LiveVideoSource.h"
 
 class RTSPVideoCapturer : public LiveVideoSource<RTSPConnection> {
 public:

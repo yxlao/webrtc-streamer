@@ -11,7 +11,7 @@
 
 #include "mkvclient.h"
 
-#include "livevideosource.h"
+#include "LiveVideoSource.h"
 
 class FileVideoCapturer : public LiveVideoSource<MKVClient> {
 public:

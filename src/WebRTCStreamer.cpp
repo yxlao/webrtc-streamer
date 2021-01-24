@@ -53,6 +53,10 @@ int main(int argc, char* argv[]) {
     rtc::InitializeSSL();
     std::list<std::string> ice_servers(stun_urls.begin(), stun_urls.end());
     Json::Value config;
+
+    config["urls"]["Bunny"]["video"] =
+            "file:///home/yixing/repo/webrtc-streamer/html/"
+            "Big_Buck_Bunny_360_10s_1MB.webm";
     webrtc::AudioDeviceModule::AudioLayer audio_layer =
             webrtc::AudioDeviceModule::kPlatformDefaultAudio;
     webrtc_server = new PeerConnectionManager(ice_servers, config["urls"],

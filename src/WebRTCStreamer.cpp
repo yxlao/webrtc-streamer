@@ -57,48 +57,47 @@ int main(int argc, char* argv[]) {
     rtc::Thread* thread = rtc::Thread::Current();
     rtc::InitializeSSL();
 
-    // webrtc server
+    // WebRTC server.
     std::list<std::string> ice_server_list;
     if ((strlen(stun_url) != 0) && (strcmp(stun_url, "-") != 0)) {
         ice_server_list.push_back(std::string("stun:") + stun_url);
     }
-
     webrtc_server = new PeerConnectionManager(ice_server_list, config["urls"],
                                               audio_layer, ".*", "");
-    if (!webrtc_server->InitializePeerConnection()) {
-        std::cout << "Cannot Initialize WebRTC server" << std::endl;
+    if (webrtc_server->InitializePeerConnection()) {
+        std::cout << "InitializePeerConnection() succeeded." << std::endl;
     } else {
-        // http server
-        std::vector<std::string> options;
-        options.push_back("document_root");
-        options.push_back(webroot);
-        options.push_back("enable_directory_listing");
-        options.push_back("no");
-        options.push_back("additional_header");
-        options.push_back("X-Frame-Options: SAMEORIGIN");
-        options.push_back("access_control_allow_origin");
-        options.push_back("*");
-        options.push_back("listening_ports");
-        options.push_back(http_address);
-        options.push_back("enable_keep_alive");
-        options.push_back("yes");
-        options.push_back("keep_alive_timeout_ms");
-        options.push_back("1000");
+        std::cout << "InitializePeerConnection() failed." << std::endl;
+    }
 
-        try {
-            std::map<std::string, HttpServerRequestHandler::httpFunction> func =
-                    webrtc_server->getHttpApi();
-            std::cout << "HTTP Listen at " << http_address << std::endl;
-            HttpServerRequestHandler httpServer(func, options);
+    // CivetWeb http server.
+    std::vector<std::string> options;
+    options.push_back("document_root");
+    options.push_back(webroot);
+    options.push_back("enable_directory_listing");
+    options.push_back("no");
+    options.push_back("additional_header");
+    options.push_back("X-Frame-Options: SAMEORIGIN");
+    options.push_back("access_control_allow_origin");
+    options.push_back("*");
+    options.push_back("listening_ports");
+    options.push_back(http_address);
+    options.push_back("enable_keep_alive");
+    options.push_back("yes");
+    options.push_back("keep_alive_timeout_ms");
+    options.push_back("1000");
+    try {
+        std::map<std::string, HttpServerRequestHandler::httpFunction> func =
+                webrtc_server->getHttpApi();
+        std::cout << "HTTP Listen at " << http_address << std::endl;
+        HttpServerRequestHandler httpServer(func, options);
 
-            // mainloop
-            signal(SIGINT, sighandler);
-            thread->Run();
-
-        } catch (const CivetException& ex) {
-            std::cout << "Cannot Initialize start HTTP server exception:"
-                      << ex.what() << std::endl;
-        }
+        // Main loop.
+        signal(SIGINT, sighandler);
+        thread->Run();
+    } catch (const CivetException& ex) {
+        std::cout << "Cannot Initialize start HTTP server exception:"
+                  << ex.what() << std::endl;
     }
 
     rtc::CleanupSSL();

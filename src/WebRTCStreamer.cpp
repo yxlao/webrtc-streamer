@@ -31,38 +31,31 @@ void sighandler(int n) {
     rtc::Thread::Current()->Quit();
 }
 
-/* ---------------------------------------------------------------------------
-**  main
-** -------------------------------------------------------------------------*/
 int main(int argc, char* argv[]) {
-    const char* stun_url = "stun.l.google.com:19302";
-    const char* webroot = "./html";
-    Json::Value config;  // E.g. stores additional resource URLs.
-    webrtc::AudioDeviceModule::AudioLayer audio_layer =
-            webrtc::AudioDeviceModule::kPlatformDefaultAudio;
-
+    // Configs.
+    const std::string web_root = "./html";
+    const std::vector<std::string> stun_urls{"stun:stun.l.google.com:19302"};
     std::string http_address("localhost:8888");
     if (argc > 1) {
         http_address = std::string(argv[1]);
     }
 
+    // Logging settings.
     std::cout << "Version:" << VERSION << std::endl;
-
     rtc::LogMessage::LogToDebug((rtc::LoggingSeverity)rtc::LERROR);
-    rtc::LogMessage::LogTimestamps();
-    rtc::LogMessage::LogThreads();
     std::cout << "Logger level:" << rtc::LogMessage::GetLogToDebug()
               << std::endl;
-
-    rtc::Thread* thread = rtc::Thread::Current();
-    rtc::InitializeSSL();
+    rtc::LogMessage::LogTimestamps();
+    rtc::LogMessage::LogThreads();
 
     // WebRTC server.
-    std::list<std::string> ice_server_list;
-    if ((strlen(stun_url) != 0) && (strcmp(stun_url, "-") != 0)) {
-        ice_server_list.push_back(std::string("stun:") + stun_url);
-    }
-    webrtc_server = new PeerConnectionManager(ice_server_list, config["urls"],
+    rtc::Thread* thread = rtc::Thread::Current();
+    rtc::InitializeSSL();
+    std::list<std::string> ice_servers(stun_urls.begin(), stun_urls.end());
+    Json::Value config;
+    webrtc::AudioDeviceModule::AudioLayer audio_layer =
+            webrtc::AudioDeviceModule::kPlatformDefaultAudio;
+    webrtc_server = new PeerConnectionManager(ice_servers, config["urls"],
                                               audio_layer, ".*", "");
     if (webrtc_server->InitializePeerConnection()) {
         std::cout << "InitializePeerConnection() succeeded." << std::endl;
@@ -73,7 +66,7 @@ int main(int argc, char* argv[]) {
     // CivetWeb http server.
     std::vector<std::string> options;
     options.push_back("document_root");
-    options.push_back(webroot);
+    options.push_back(web_root);
     options.push_back("enable_directory_listing");
     options.push_back("no");
     options.push_back("additional_header");

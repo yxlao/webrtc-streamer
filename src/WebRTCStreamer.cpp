@@ -21,10 +21,6 @@
 #include "PeerConnectionManager.h"
 #include "HttpServerRequestHandler.h"
 
-#if WIN32
-#include "getopt.h"
-#endif
-
 PeerConnectionManager* webRtcServer = NULL;
 
 void sighandler(int n) {

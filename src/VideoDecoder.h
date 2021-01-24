@@ -55,7 +55,7 @@ public:
             m_queue.pop();
             mlock.unlock();
 
-            if (frame.m_content.get() != NULL) {
+            if (frame.m_content.get() != nullptr) {
                 RTC_LOG(LS_VERBOSE) << "VideoDecoder::DecoderThread size:"
                                     << frame.m_content->size()
                                     << " ts:" << frame.m_timestamp_ms;
@@ -146,7 +146,7 @@ public:
                     webrtc::SdpVideoFormat(cricket::kVp9CodecName));
             codec_settings.codecType = webrtc::VideoCodecType::kVideoCodecVP9;
         }
-        if (m_decoder.get() != NULL) {
+        if (m_decoder.get() != nullptr) {
             m_decoder->InitDecode(&codec_settings, 2);
             m_decoder->RegisterDecodeCompleteCallback(this);
         }
@@ -154,7 +154,7 @@ public:
 
     void destroyDecoder() { m_decoder.reset(NULL); }
 
-    bool hasDecoder() { return (m_decoder.get() != NULL); }
+    bool hasDecoder() { return (m_decoder.get() != nullptr); }
 
     void PostFrame(
             const rtc::scoped_refptr<webrtc::EncodedImageBuffer>& content,

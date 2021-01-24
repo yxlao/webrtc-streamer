@@ -21,13 +21,13 @@
 #include "PeerConnectionManager.h"
 #include "HttpServerRequestHandler.h"
 
-PeerConnectionManager* webRtcServer = NULL;
+PeerConnectionManager* webrtc_server = nullptr;
 
 void sighandler(int n) {
     printf("SIGINT\n");
     // delete need thread still running
-    delete webRtcServer;
-    webRtcServer = NULL;
+    delete webrtc_server;
+    webrtc_server = nullptr;
     rtc::Thread::Current()->Quit();
 }
 
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
     const char* stun_url = "stun.l.google.com:19302";
     const char* webroot = "./html";
     Json::Value config;  // E.g. stores additional resource URLs.
-    webrtc::AudioDeviceModule::AudioLayer audioLayer =
+    webrtc::AudioDeviceModule::AudioLayer audio_layer =
             webrtc::AudioDeviceModule::kPlatformDefaultAudio;
 
     std::string http_address("localhost:8888");
@@ -58,14 +58,14 @@ int main(int argc, char* argv[]) {
     rtc::InitializeSSL();
 
     // webrtc server
-    std::list<std::string> iceServerList;
+    std::list<std::string> ice_server_list;
     if ((strlen(stun_url) != 0) && (strcmp(stun_url, "-") != 0)) {
-        iceServerList.push_back(std::string("stun:") + stun_url);
+        ice_server_list.push_back(std::string("stun:") + stun_url);
     }
 
-    webRtcServer = new PeerConnectionManager(iceServerList, config["urls"],
-                                             audioLayer, ".*", "");
-    if (!webRtcServer->InitializePeerConnection()) {
+    webrtc_server = new PeerConnectionManager(ice_server_list, config["urls"],
+                                              audio_layer, ".*", "");
+    if (!webrtc_server->InitializePeerConnection()) {
         std::cout << "Cannot Initialize WebRTC server" << std::endl;
     } else {
         // http server
@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
 
         try {
             std::map<std::string, HttpServerRequestHandler::httpFunction> func =
-                    webRtcServer->getHttpApi();
+                    webrtc_server->getHttpApi();
             std::cout << "HTTP Listen at " << http_address << std::endl;
             HttpServerRequestHandler httpServer(func, options);
 

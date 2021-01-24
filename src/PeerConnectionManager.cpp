@@ -56,12 +56,13 @@ std::string getServerIpFromClientIp(int clientip) { return "127.0.0.1"; }
 std::string getServerIpFromClientIp(int clientip) {
     std::string serverAddress;
     char host[NI_MAXHOST];
-    struct ifaddrs *ifaddr = NULL;
+    struct ifaddrs *ifaddr = nullptr;
     if (getifaddrs(&ifaddr) == 0) {
-        for (struct ifaddrs *ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-            if ((ifa->ifa_netmask != NULL) &&
+        for (struct ifaddrs *ifa = ifaddr; ifa != nullptr;
+             ifa = ifa->ifa_next) {
+            if ((ifa->ifa_netmask != nullptr) &&
                 (ifa->ifa_netmask->sa_family == AF_INET) &&
-                (ifa->ifa_addr != NULL) &&
+                (ifa->ifa_addr != nullptr) &&
                 (ifa->ifa_addr->sa_family == AF_INET)) {
                 struct sockaddr_in *addr = (struct sockaddr_in *)ifa->ifa_addr;
                 struct sockaddr_in *mask =
@@ -134,9 +135,9 @@ CreatePeerConnectionFactoryDependencies(
         rtc::scoped_refptr<webrtc::AudioDeviceModule> audioDeviceModule,
         rtc::scoped_refptr<webrtc::AudioDecoderFactory> audioDecoderfactory) {
     webrtc::PeerConnectionFactoryDependencies dependencies;
-    dependencies.network_thread = NULL;
+    dependencies.network_thread = nullptr;
     dependencies.worker_thread = rtc::Thread::Current();
-    dependencies.signaling_thread = NULL;
+    dependencies.signaling_thread = nullptr;
     dependencies.call_factory = webrtc::CreateCallFactory();
     dependencies.task_queue_factory = webrtc::CreateDefaultTaskQueueFactory();
     dependencies.event_log_factory =
@@ -760,7 +761,7 @@ const Json::Value PeerConnectionManager::hangUp(const std::string &peerid) {
     bool result = false;
     RTC_LOG(INFO) << __FUNCTION__ << " " << peerid;
 
-    PeerConnectionObserver *pcObserver = NULL;
+    PeerConnectionObserver *pcObserver = nullptr;
     {
         std::lock_guard<std::mutex> peerlock(m_peerMapMutex);
         std::map<std::string, PeerConnectionObserver *>::iterator it =
@@ -868,7 +869,7 @@ const Json::Value PeerConnectionManager::getPeerConnectionList() {
             if (localstreams) {
                 for (unsigned int i = 0; i < localstreams->count(); i++) {
                     auto localStream = localstreams->at(i);
-                    if (localStream != NULL) {
+                    if (localStream != nullptr) {
                         Json::Value tracks;
 
                         const webrtc::VideoTrackVector &videoTracks =
@@ -940,7 +941,7 @@ const Json::Value PeerConnectionManager::getStreamList() {
 **  check if factory is initialized
 ** -------------------------------------------------------------------------*/
 bool PeerConnectionManager::InitializePeerConnection() {
-    return (m_peer_connection_factory.get() != NULL);
+    return (m_peer_connection_factory.get() != nullptr);
 }
 
 /* ---------------------------------------------------------------------------

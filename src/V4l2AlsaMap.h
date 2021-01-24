@@ -34,8 +34,8 @@ std::map<std::string, std::string> getVideoDevices() {
     std::map<std::string, std::string> videodevices;
     std::string video4linuxPath("/sys/class/video4linux");
     DIR *dp = opendir(video4linuxPath.c_str());
-    if (dp != NULL) {
-        struct dirent *entry = NULL;
+    if (dp != nullptr) {
+        struct dirent *entry = nullptr;
         while ((entry = readdir(dp))) {
             std::string devicename;
             std::string deviceid;
@@ -70,8 +70,8 @@ std::map<std::string, std::string> getAudioDevices() {
     std::map<std::string, std::string> audiodevices;
     std::string audioLinuxPath("/sys/class/sound");
     DIR *dp = opendir(audioLinuxPath.c_str());
-    if (dp != NULL) {
-        struct dirent *entry = NULL;
+    if (dp != nullptr) {
+        struct dirent *entry = nullptr;
         while ((entry = readdir(dp))) {
             std::string devicename;
             std::string deviceid;

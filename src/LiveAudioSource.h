@@ -116,7 +116,7 @@ public:
             RTC_LOG(LS_VERBOSE) << "LiveAudioSource::onData decode ts:" << ts
                                 << " source ts:" << sourcets;
 
-            if (m_decoder.get() != NULL) {
+            if (m_decoder.get() != nullptr) {
                 // waiting
                 if ((m_wait) && (m_prevts != 0)) {
                     int64_t periodSource = sourcets - m_previmagets;

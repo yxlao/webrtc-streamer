@@ -311,12 +311,10 @@ class PeerConnectionManager {
     };
 
 public:
-    PeerConnectionManager(
-            const std::list<std::string>& iceServerList,
-            const Json::Value& config,
-            const webrtc::AudioDeviceModule::AudioLayer audioLayer,
-            const std::string& publishFilter,
-            const std::string& webrtcUdpPortRange);
+    PeerConnectionManager(const std::list<std::string>& iceServerList,
+                          const Json::Value& config,
+                          const std::string& publishFilter,
+                          const std::string& webrtcUdpPortRange);
     virtual ~PeerConnectionManager();
 
     bool InitializePeerConnection();

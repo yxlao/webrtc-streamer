@@ -57,10 +57,8 @@ int main(int argc, char* argv[]) {
     config["urls"]["Bunny"]["video"] =
             "file:///home/yixing/repo/webrtc-streamer/html/"
             "Big_Buck_Bunny_360_10s_1MB.webm";
-    webrtc::AudioDeviceModule::AudioLayer audio_layer =
-            webrtc::AudioDeviceModule::kPlatformDefaultAudio;
-    webrtc_server = new PeerConnectionManager(ice_servers, config["urls"],
-                                              audio_layer, ".*", "");
+    webrtc_server =
+            new PeerConnectionManager(ice_servers, config["urls"], ".*", "");
     if (webrtc_server->InitializePeerConnection()) {
         std::cout << "InitializePeerConnection() succeeded." << std::endl;
     } else {

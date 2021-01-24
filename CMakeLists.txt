@@ -28,7 +28,7 @@ if(GIT_FOUND)
         "${PROJECTVERSION}/${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
 
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} -C civetweb describe --tags --always --dirty
+        COMMAND ${GIT_EXECUTABLE} -C ${PROJECT_SOURCE_DIR}/civetweb describe --tags --always --dirty
         OUTPUT_VARIABLE CIVETVERSION
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     set(VERSION "${VERSION} civetweb@${CIVETVERSION}")
@@ -41,7 +41,7 @@ if(GIT_FOUND)
     set(VERSION "${VERSION} webrtc@${WEBRTCVERSION}")
 
     execute_process(
-        COMMAND ${GIT_EXECUTABLE} -C live555helper describe --tags --always
+        COMMAND ${GIT_EXECUTABLE} -C ${PROJECT_SOURCE_DIR}/live555helper describe --tags --always
                 --dirty
         OUTPUT_VARIABLE LIVEVERSION
         OUTPUT_STRIP_TRAILING_WHITESPACE)

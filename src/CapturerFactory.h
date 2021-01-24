@@ -8,7 +8,7 @@
 ** -------------------------------------------------------------------------*/
 
 // # All sources
-// DesktopCapturer.h    #
+// DesktopCapturer.h    # X11 <- implicit
 // FileAudioCapturer.h  # HAVE_LIVE555
 // FileVideoCapturer.h  # HAVE_LIVE555
 // RTPVideoCapturer.h   # HAVE_LIVE555

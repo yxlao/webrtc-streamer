@@ -35,7 +35,6 @@ void sighandler(int n) {
 **  main
 ** -------------------------------------------------------------------------*/
 int main(int argc, char* argv[]) {
-    const char* turnurl = "";
     const char* defaultlocalturnurl = "turn:turn@0.0.0.0:3478";
     const char* stunurl = "stun.l.google.com:19302";
     std::string defaultWebrtcUdpPortRange = "0:65535";
@@ -69,9 +68,6 @@ int main(int argc, char* argv[]) {
     std::list<std::string> iceServerList;
     if ((strlen(stunurl) != 0) && (strcmp(stunurl, "-") != 0)) {
         iceServerList.push_back(std::string("stun:") + stunurl);
-    }
-    if (strlen(turnurl)) {
-        iceServerList.push_back(std::string("turn:") + turnurl);
     }
 
     webRtcServer =

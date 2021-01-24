@@ -23,7 +23,7 @@
 
 PeerConnectionManager* webrtc_server = nullptr;
 
-void sighandler(int n) {
+void SignalHandler(int n) {
     printf("SIGINT\n");
     // delete need thread still running
     delete webrtc_server;
@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
         HttpServerRequestHandler httpServer(func, options);
 
         // Main loop.
-        signal(SIGINT, sighandler);
+        signal(SIGINT, SignalHandler);
         thread->Run();
     } catch (const CivetException& ex) {
         std::cout << "Cannot Initialize start HTTP server exception:"

@@ -7,6 +7,17 @@
 **
 ** -------------------------------------------------------------------------*/
 
+// # All sources
+// DesktopCapturer.h    #
+// FileAudioCapturer.h  # HAVE_LIVE555
+// FileVideoCapturer.h  # HAVE_LIVE555
+// RTPVideoCapturer.h   # HAVE_LIVE555
+// RTSPAudioCapturer.h  # HAVE_LIVE555
+// RTSPVideoCapturer.h  # HAVE_LIVE555
+// ScreenCapturer.h     # X11
+// VcmCapturer.h        #
+// WindowCapturer.h     # X11
+
 #pragma once
 
 #include <regex>

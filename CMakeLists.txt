@@ -149,13 +149,9 @@ endif()
 
 set(WEBRTCOBJS ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/obj)
 
-if(NOT
-   EXISTS
-   ${WEBRTCOBJS}/${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX}
-)
+if(NOT EXISTS ${WEBRTCOBJS}/${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX})
     execute_process(WORKING_DIRECTORY ${WEBRTCROOT}/src/out/${WEBRTCBUILD}
                     COMMAND ${SHELLCOMMAND} gn gen .)
-
     set(NINJA_TARGET
         webrtc
         rtc_json
@@ -165,15 +161,14 @@ if(NOT
         peerconnection
         p2p_server_utils
         task_queue
-        default_task_queue_factory)
+        default_task_queue_factory
+    )
     execute_process(WORKING_DIRECTORY ${WEBRTCROOT}/src/out/${WEBRTCBUILD}
                     COMMAND ninja ${NINJA_TARGET})
 endif()
 
-file(
-    GLOB_RECURSE WEBRTBBRCOBJS
-    ${WEBRTCOBJS}/modules/congestion_controller/bbr/*${CMAKE_C_OUTPUT_EXTENSION}
-)
+file(GLOB_RECURSE WEBRTBBRCOBJS
+    ${WEBRTCOBJS}/modules/congestion_controller/bbr/*${CMAKE_C_OUTPUT_EXTENSION})
 file(GLOB_RECURSE WEBRTJSONCPPCOBJS
      ${WEBRTCOBJS}/third_party/jsoncpp/jsoncpp/*${CMAKE_C_OUTPUT_EXTENSION})
 file(GLOB_RECURSE WEBRTP2POBJ
@@ -184,7 +179,6 @@ file(GLOB_RECURSE WEBRTTASK
 set(WEBRTCEXTRAOBJS
     ${WEBRTJSONCPPCOBJS} ${WEBRTBBRCOBJS} ${WEBRTP2POBJ} ${WEBRTTASK}
     ${WEBRTCOBJS}/rtc_base/rtc_json/json${CMAKE_C_OUTPUT_EXTENSION})
-
 
 # Dependency: WebRTC.
 set(WEBRTC_INCLUDE_DIR
@@ -223,12 +217,10 @@ function(set_global_target_properties target)
         ${WEBRTC_INCLUDE_DIR}
         ${CIVETWEB_INCLUDE_DIR}
     )
-
     target_link_directories(${target} PRIVATE
         ${WEBRTC_LIB_DIR}
         ${CIVETWEB_LIB_DIR}
     )
-
     target_link_libraries(${target} PRIVATE
         ${WEBRTC_LIBRARIES}
         ${CIVETWEB_LIBRARIES}
@@ -236,11 +228,24 @@ function(set_global_target_properties target)
         Threads::Threads
         dl
     )
-
     target_compile_definitions(${target} PRIVATE
         HAVE_LIVE555 # live555helper
         NO_OPENSSL=1 # live555helper
     )
+
+    # X11
+    if(EXISTS ${WEBRTCOBJS}/modules/desktop_capture/desktop_capture.ninja)
+        target_compile_definitions(${target} PRIVATE USE_X11)
+        target_link_libraries(${target} PRIVATE
+            X11
+            Xext
+            Xdamage
+            Xfixes
+            Xcomposite
+            Xrandr
+            Xtst
+        )
+    endif()
 
     set_target_properties(${target}
         PROPERTIES
@@ -249,35 +254,14 @@ function(set_global_target_properties target)
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
     )
 
-    # TODO: Enable
-    # target_compile_options(${target} PRIVATE
-    #     $<$<COMPILE_LANGUAGE:C>:$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX ${DISABLE_MSVC_WARNINGS}>>
-    #     $<$<COMPILE_LANGUAGE:C>:$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang,Intel>:-Wall -Werror>>
-    #     $<$<COMPILE_LANGUAGE:CXX>:$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX ${DISABLE_MSVC_WARNINGS}>>
-    #     $<$<COMPILE_LANGUAGE:CXX>:$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang,Intel>:-Wall -Werror>>
-    # )
-
-    # compiler specific
+    # Compiler specific,
     add_definitions(-DWEBRTC_POSIX -fno-rtti)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6.*")
         target_link_libraries(${target} -Wl,-Bstatic -latomic -Wl,-Bdynamic)
         add_definitions(-marm -march=armv6 -mfpu=vfp -mfloat-abi=hard)
     endif()
-    if(EXISTS ${WEBRTCOBJS}/modules/desktop_capture/desktop_capture.ninja)
-        add_definitions(-DUSE_X11)
-        target_link_libraries(
-            ${target}
-            PRIVATE
-            X11
-            Xext
-            Xdamage
-            Xfixes
-            Xcomposite
-            Xrandr
-            Xtst)
-    endif()
-    # static link of stdc++ if available on arm (raise unresolved symbol on
-    # x86-64)
+
+    # Static link of stdc++ if available on arm (unresolved symbol on x86-64)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm.*")
         include(CheckCXXCompilerFlag)
         check_cxx_compiler_flag("-static-libgcc" CXX_SUPPORTS_STATIC_LIBGCC)
@@ -291,6 +275,13 @@ function(set_global_target_properties target)
         endif()
     endif()
 
+    # TODO: Fix warnings.
+    # target_compile_options(${target} PRIVATE
+    #     $<$<COMPILE_LANGUAGE:C>:$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX ${DISABLE_MSVC_WARNINGS}>>
+    #     $<$<COMPILE_LANGUAGE:C>:$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang,Intel>:-Wall -Werror>>
+    #     $<$<COMPILE_LANGUAGE:CXX>:$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX ${DISABLE_MSVC_WARNINGS}>>
+    #     $<$<COMPILE_LANGUAGE:CXX>:$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang,Intel>:-Wall -Werror>>
+    # )
 endfunction()
 
 add_subdirectory(src)

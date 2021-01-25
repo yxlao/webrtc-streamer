@@ -19,7 +19,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # build version identifier
 find_package(Git)
 if(GIT_FOUND)
-    execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init)
+    # execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init)
     execute_process(
         COMMAND ${GIT_EXECUTABLE} describe --tags --always --dirty
         OUTPUT_VARIABLE PROJECTVERSION

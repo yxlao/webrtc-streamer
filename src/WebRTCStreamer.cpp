@@ -21,13 +21,13 @@
 #include "PeerConnectionManager.h"
 #include "HttpServerRequestHandler.h"
 
-PeerConnectionManager* webrtc_server = nullptr;
+PeerConnectionManager* peer_connection_manager = nullptr;
 
 void SignalHandler(int n) {
     printf("SIGINT\n");
     // delete need thread still running
-    delete webrtc_server;
-    webrtc_server = nullptr;
+    delete peer_connection_manager;
+    peer_connection_manager = nullptr;
     rtc::Thread::Current()->Quit();
 }
 
@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
     rtc::LogMessage::LogTimestamps();
     rtc::LogMessage::LogThreads();
 
-    // WebRTC server.
+    // WebRTC server (a PeerConnectionManager).
     rtc::Thread* thread = rtc::Thread::Current();
     rtc::InitializeSSL();
     std::list<std::string> ice_servers(stun_urls.begin(), stun_urls.end());
@@ -57,9 +57,9 @@ int main(int argc, char* argv[]) {
     config["urls"]["Bunny"]["video"] =
             "file:///home/yixing/repo/webrtc-streamer/html/"
             "Big_Buck_Bunny_360_10s_1MB.webm";
-    webrtc_server =
+    peer_connection_manager =
             new PeerConnectionManager(ice_servers, config["urls"], ".*", "");
-    if (webrtc_server->InitializePeerConnection()) {
+    if (peer_connection_manager->InitializePeerConnection()) {
         std::cout << "InitializePeerConnection() succeeded." << std::endl;
     } else {
         throw std::runtime_error("InitializePeerConnection() failed.");
@@ -82,12 +82,14 @@ int main(int argc, char* argv[]) {
     options.push_back("keep_alive_timeout_ms");
     options.push_back("1000");
     try {
+        // PeerConnectionManager provides a set of callback functions for
+        // HttpServerRequestHandler.
         std::map<std::string, HttpServerRequestHandler::httpFunction> func =
-                webrtc_server->getHttpApi();
-        std::cout << "HTTP Listen at " << http_address << std::endl;
-        HttpServerRequestHandler civet_server(func, options);
+                peer_connection_manager->getHttpApi();
 
         // Main loop.
+        std::cout << "HTTP Listen at " << http_address << std::endl;
+        HttpServerRequestHandler civet_server(func, options);
         signal(SIGINT, SignalHandler);
         thread->Run();
     } catch (const CivetException& ex) {

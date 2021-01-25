@@ -42,7 +42,8 @@ int main(int argc, char* argv[]) {
 
     // Logging settings.
     std::cout << "Version:" << VERSION << std::endl;
-    rtc::LogMessage::LogToDebug((rtc::LoggingSeverity)rtc::LERROR);
+    // src/rtc_base/logging.h
+    rtc::LogMessage::LogToDebug((rtc::LoggingSeverity)rtc::LS_VERBOSE);
     std::cout << "Logger level:" << rtc::LogMessage::GetLogToDebug()
               << std::endl;
     rtc::LogMessage::LogTimestamps();

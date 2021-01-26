@@ -243,10 +243,6 @@
         fetch(webrtcConfig.url + "/api/getMediaList")
           .then((response) => response.json())
           .then((response) => onGetDeviceList(response));
-
-        fetch(webrtcConfig.url + "/api/version")
-          .then((response) => response.json())
-          .then((response) => onVersion(response));
       };
       window.onbeforeunload = function () {
         for (var url in webRtcServerList) {

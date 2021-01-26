@@ -302,11 +302,6 @@ PeerConnectionManager::PeerConnectionManager(
         return this->getStreamList();
     };
 
-    m_func["/api/version"] = [](const struct mg_request_info *req_info,
-                                const Json::Value &in) -> Json::Value {
-        Json::Value answer(VERSION);
-        return answer;
-    };
     m_func["/api/log"] = [](const struct mg_request_info *req_info,
                             const Json::Value &in) -> Json::Value {
         std::string loglevel;

@@ -16,39 +16,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# build version identifier
-find_package(Git)
-if(GIT_FOUND)
-    # execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init)
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} describe --tags --always --dirty
-        OUTPUT_VARIABLE PROJECTVERSION
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(VERSION
-        "${PROJECTVERSION}/${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
-
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} -C ${PROJECT_SOURCE_DIR}/civetweb describe --tags --always --dirty
-        OUTPUT_VARIABLE CIVETVERSION
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(VERSION "${VERSION} civetweb@${CIVETVERSION}")
-
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} -C ${WEBRTCROOT}/src describe --tags --always
-                --dirty
-        OUTPUT_VARIABLE WEBRTCVERSION
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(VERSION "${VERSION} webrtc@${WEBRTCVERSION}")
-
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} -C ${PROJECT_SOURCE_DIR}/live555helper describe --tags --always
-                --dirty
-        OUTPUT_VARIABLE LIVEVERSION
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(VERSION "${VERSION} live555helper@${LIVEVERSION}")
-endif()
-add_definitions(-DVERSION=\"${VERSION}\")
-
 # set CMAKE_FIND_ROOT_PATH to search package in WebRTC sysroot
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv.*")
     set(CMAKE_FIND_ROOT_PATH

@@ -196,8 +196,12 @@ function(set_global_target_properties target)
         dl
     )
     target_compile_definitions(${target} PRIVATE
+        WEBRTC_POSIX
         HAVE_LIVE555 # live555helper
         NO_OPENSSL=1 # live555helper
+    )
+    target_compile_options(${target} PRIVATE
+        "-fno-rtti"
     )
 
     # X11
@@ -221,13 +225,11 @@ function(set_global_target_properties target)
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
     )
 
-    # Compiler specific,
-    add_definitions(-DWEBRTC_POSIX -fno-rtti)
+    # ARM64 specific.
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6.*")
         target_link_libraries(${target} -Wl,-Bstatic -latomic -Wl,-Bdynamic)
         add_definitions(-marm -march=armv6 -mfpu=vfp -mfloat-abi=hard)
     endif()
-
     # Static link of stdc++ if available on arm (unresolved symbol on x86-64)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm.*")
         include(CheckCXXCompilerFlag)

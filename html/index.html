@@ -153,6 +153,10 @@
         console.log("videoOnMouseUp: " + event.offsetX + " " + event.offsetY);
       }
 
+      function videoOnMouseMove(event) {
+        console.log("videoOnMouseMove: " + event.offsetX + " " + event.offsetY);
+      }
+
       // ------------------------------------------
       // add a webrtc client connection
       // ------------------------------------------
@@ -188,6 +192,7 @@
             videoElt.playsinline = true;
             videoElt.addEventListener("mousedown", videoOnMouseDown);
             videoElt.addEventListener("mouseup", videoOnMouseUp);
+            videoElt.addEventListener("mousemove", videoOnMouseMove);
             divElt.appendChild(videoElt);
             contentDiv.appendChild(divElt);
           }

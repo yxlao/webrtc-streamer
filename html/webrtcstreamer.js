@@ -225,7 +225,7 @@ var WebRtcStreamer = (function () {
 
       evt.channel.onopen = function () {
         console.log("remote datachannel open");
-        this.send("remote channel openned");
+        this.send("remote channel opened");
       };
       evt.channel.onmessage = function (event) {
         console.log("remote datachannel recv:" + JSON.stringify(event.data));
@@ -249,17 +249,17 @@ var WebRtcStreamer = (function () {
       var dataChannel = pc.createDataChannel("ClientDataChannel");
       dataChannel.onopen = function () {
         console.log("local datachannel open");
-        this.send("local channel openned");
+        this.send("local channel opened");
       };
       dataChannel.onmessage = function (evt) {
         console.log("local datachannel recv:" + JSON.stringify(evt.data));
       };
     } catch (e) {
-      console.log("Cannor create datachannel error: " + e);
+      console.log("Cannot create datachannel error: " + e);
     }
 
     console.log(
-      "Created RTCPeerConnnection with config: " +
+      "Created RTCPeerConnection with config: " +
         JSON.stringify(this.pcConfig) +
         "option:" +
         JSON.stringify(this.pcOptions)

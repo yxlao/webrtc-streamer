@@ -145,6 +145,21 @@
         navElt.className = "";
       }
 
+      function getElementXY(element, event) {
+        // https://stackoverflow.com/a/18053642/1255535
+        const rect = element.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        return [x, y];
+      }
+
+      function getVideoOnClick(videoElement) {
+        return function impl(event) {
+          const [x, y] = getElementXY(videoElement, event);
+          console.log("videoOnClick: " + x + " " + y);
+        };
+      }
+
       // ------------------------------------------
       // add a webrtc client connection
       // ------------------------------------------
@@ -178,6 +193,7 @@
             videoElt.muted = true;
             videoElt.controls = false;
             videoElt.playsinline = true;
+            videoElt.addEventListener("click", getVideoOnClick(videoElt));
             divElt.appendChild(videoElt);
             contentDiv.appendChild(divElt);
           }

@@ -111,6 +111,7 @@ public:
         int res = 0;
 
         std::string codec = m_codec[id];
+        RTC_LOG(LS_VERBOSE) << "LiveVideoSource: codec= " << m_codec[id];
         if (codec == "H264") {
             webrtc::H264::NaluType nalu_type =
                     webrtc::H264::ParseNaluType(buffer[sizeof(H26X_marker)]);

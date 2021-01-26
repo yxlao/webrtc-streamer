@@ -168,7 +168,7 @@ add_library(civetweb STATIC
     ${PROJECT_SOURCE_DIR}/civetweb/src/civetweb.c
     ${PROJECT_SOURCE_DIR}/civetweb/src/CivetServer.cpp
 )
-target_include_directories(civetweb PRIVATE ${PROJECT_SOURCE_DIR}/civetweb/include)
+target_include_directories(civetweb SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/civetweb/include)
 target_compile_definitions(civetweb PRIVATE OPENSSL_API_1_1)
 set(CIVETWEB_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/civetweb/include)
 set(CIVETWEB_LIB_DIR ${CMAKE_BINARY_DIR})
@@ -180,7 +180,7 @@ set(LIVE555HELPER_LIBRARIES liblive555helper)
 
 function(set_global_target_properties target)
 
-    target_include_directories(${target} PRIVATE SYSTEM
+    target_include_directories(${target} SYSTEM PRIVATE
         ${WEBRTC_INCLUDE_DIR}
         ${CIVETWEB_INCLUDE_DIR}
     )

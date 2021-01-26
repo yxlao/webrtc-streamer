@@ -155,36 +155,36 @@
         if (document.getElementById(videoTag) === null) {
           var contentDiv = getContentDiv();
           if (contentDiv) {
-            let webstreamurl = webrtcConfig.url + "/webrtcstreamer.html?";
+            let webStreamUrl = webrtcConfig.url + "/webrtcstreamer.html?";
             if (url.video) {
-              webstreamurl += "video=" + encodeURIComponent(url.video) + "&";
+              webStreamUrl += "video=" + encodeURIComponent(url.video) + "&";
             }
             if (url.audio) {
-              webstreamurl += "audio=" + encodeURIComponent(url.audio) + "&";
+              webStreamUrl += "audio=" + encodeURIComponent(url.audio) + "&";
             }
             if (argoptions) {
-              webstreamurl += "options=" + encodeURIComponent(argoptions) + "&";
+              webStreamUrl += "options=" + encodeURIComponent(argoptions) + "&";
             }
-            var divelt = document.createElement("div");
-            divelt.id = "div_" + videoTag;
-            var nameelt = document.createElement("h2");
-            nameelt.id = "title_" + videoTag;
-            nameelt.innerHTML =
-              "<a href='" + webstreamurl + "' >" + getText(url) + "</a>";
-            divelt.appendChild(nameelt);
-            var videoelt = document.createElement("video");
-            videoelt.id = videoTag;
-            videoelt.title = getText(url);
-            videoelt.muted = true;
-            videoelt.controls = true;
-            videoelt.playsinline = true;
-            divelt.appendChild(videoelt);
-            contentDiv.appendChild(divelt);
+            var divElt = document.createElement("div");
+            divElt.id = "div_" + videoTag;
+            var nameElt = document.createElement("h2");
+            nameElt.id = "title_" + videoTag;
+            nameElt.innerHTML =
+              "<a href='" + webStreamUrl + "' >" + getText(url) + "</a>";
+            divElt.appendChild(nameElt);
+            var videoElt = document.createElement("video");
+            videoElt.id = videoTag;
+            videoElt.title = getText(url);
+            videoElt.muted = true;
+            videoElt.controls = false;
+            videoElt.playsinline = true;
+            divElt.appendChild(videoElt);
+            contentDiv.appendChild(divElt);
           }
         }
 
-        var videoelt = document.getElementById(videoTag);
-        if (videoelt) {
+        var videoElt = document.getElementById(videoTag);
+        if (videoElt) {
           // connect video element to webrtc stream
           var webRtcServer = new WebRtcStreamer(videoTag, webrtcConfig.url);
 

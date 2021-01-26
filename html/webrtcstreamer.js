@@ -20,6 +20,7 @@ var WebRtcStreamer = (function () {
         ":" +
         window.location.port;
     this.pc = null;
+    this.dataChannel = null;
 
     this.pcOptions = { optional: [{ DtlsSrtpKeyAgreement: true }] };
 
@@ -247,12 +248,12 @@ var WebRtcStreamer = (function () {
     };
 
     try {
-      var dataChannel = pc.createDataChannel("ClientDataChannel");
-      dataChannel.onopen = function () {
+      this.dataChannel = pc.createDataChannel("ClientDataChannel");
+      this.dataChannel.onopen = function () {
         console.log("local datachannel open");
         this.send("local channel opened");
       };
-      dataChannel.onmessage = function (evt) {
+      this.dataChannel.onmessage = function (evt) {
         console.log("local datachannel recv:" + JSON.stringify(evt.data));
       };
     } catch (e) {

@@ -1,4 +1,5 @@
 var WebRtcStreamer = (function () {
+  // Immediately-executing anonymous functions to enforce variable scope.
   /**
    * Interface with WebRTC-streamer API
    * @constructor

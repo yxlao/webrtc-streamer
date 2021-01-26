@@ -202,29 +202,22 @@
           // register webrtc streamer connection
           webRtcServerList[videoTag] = webRtcServer;
 
-          function videoOnMouseDown(event) {
-            console.log(
-              "videoOnMouseDown: " + event.offsetX + " " + event.offsetY
-            );
-            webRtcServer.dataChannel.send(
-              "videoOnMouseDown: " + event.offsetX + " " + event.offsetY
-            );
-          }
-          function videoOnMouseUp(event) {
-            console.log(
-              "videoOnMouseUp: " + event.offsetX + " " + event.offsetY
-            );
-          }
-          function videoOnMouseMove(event) {
-            console.log(
-              "videoOnMouseMove: " + event.offsetX + " " + event.offsetY
-            );
-          }
-
           // Register callbacks for videoElt.
-          videoElt.addEventListener("mousedown", videoOnMouseDown);
-          videoElt.addEventListener("mouseup", videoOnMouseUp);
-          videoElt.addEventListener("mousemove", videoOnMouseMove);
+          videoElt.addEventListener("mousedown", (event) => {
+            var msg = "mousedown " + event.offsetX + " " + event.offsetY;
+            console.log(msg);
+            webRtcServer.dataChannel.send(msg);
+          });
+          videoElt.addEventListener("mouseup", (event) => {
+            var msg = "mouseup " + event.offsetX + " " + event.offsetY;
+            console.log(msg);
+            webRtcServer.dataChannel.send(msg);
+          });
+          videoElt.addEventListener("mousemove", (event) => {
+            var msg = "mousemove " + event.offsetX + " " + event.offsetY;
+            console.log(msg);
+            webRtcServer.dataChannel.send(msg);
+          });
         }
       }
 

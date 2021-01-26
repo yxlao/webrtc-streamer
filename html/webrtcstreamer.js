@@ -102,6 +102,7 @@ var WebRtcStreamer = (function () {
         console.log("Failure close peer connection:" + e);
       }
       this.pc = null;
+      this.dataChannel = null;
     }
   };
 
@@ -249,11 +250,12 @@ var WebRtcStreamer = (function () {
 
     try {
       this.dataChannel = pc.createDataChannel("ClientDataChannel");
-      this.dataChannel.onopen = function () {
+      var dataChannel = this.dataChannel;
+      dataChannel.onopen = function () {
         console.log("local datachannel open");
         this.send("local channel opened");
       };
-      this.dataChannel.onmessage = function (evt) {
+      dataChannel.onmessage = function (evt) {
         console.log("local datachannel recv:" + JSON.stringify(evt.data));
       };
     } catch (e) {

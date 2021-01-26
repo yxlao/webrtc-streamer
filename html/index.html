@@ -145,8 +145,12 @@
         navElt.className = "";
       }
 
-      function videoOnClick(event) {
-        console.log("videoOnClick: " + event.offsetX + " " + event.offsetY);
+      function videoOnMouseDown(event) {
+        console.log("videoOnMouseDown: " + event.offsetX + " " + event.offsetY);
+      }
+
+      function videoOnMouseUp(event) {
+        console.log("videoOnMouseUp: " + event.offsetX + " " + event.offsetY);
       }
 
       // ------------------------------------------
@@ -182,7 +186,8 @@
             videoElt.muted = true;
             videoElt.controls = false;
             videoElt.playsinline = true;
-            videoElt.addEventListener("click", videoOnClick);
+            videoElt.addEventListener("mousedown", videoOnMouseDown);
+            videoElt.addEventListener("mouseup", videoOnMouseUp);
             divElt.appendChild(videoElt);
             contentDiv.appendChild(divElt);
           }

@@ -1,7 +1,33 @@
-# project target
-file(GLOB SOURCE *.cpp)
-add_executable(webrtc-streamer ${SOURCE} ${WEBRTCEXTRAOBJS})
+file(GLOB WEBRTC_STREAMER_SRC *.cpp)
+file(GLOB LIVE_SRC
+    live/groupsock/*.c*
+    live/liveMedia/*.c*
+    live/UsageEnvironment/*.c*
+    live/BasicUsageEnvironment/*.c*
+    live555helper/*.cpp
+)
+
+add_executable(webrtc-streamer
+    ${WEBRTC_STREAMER_SRC}
+    ${LIVE_SRC}
+    ${WEBRTCEXTRAOBJS}
+)
 set_global_target_properties(webrtc-streamer)
+target_include_directories(webrtc-streamer SYSTEM PRIVATE
+    live/groupsock/include
+    live/liveMedia/include
+    live/UsageEnvironment/include
+    live/BasicUsageEnvironment/include
+    live555helper
+)
+target_compile_definitions(webrtc-streamer PRIVATE
+    HAVE_LIVE555 # live555helper
+    NO_OPENSSL=1
+    BSD=1
+    SOCKLEN_T=socklen_t
+    _FILE_OFFSET_BITS=64
+    _LARGEFILE_SOURCE=1
+)
 
 add_custom_target(copy-html-dir
     COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_BINARY_DIR}/html

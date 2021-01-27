@@ -174,10 +174,6 @@ set(CIVETWEB_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/civetweb/include)
 set(CIVETWEB_LIB_DIR ${CMAKE_BINARY_DIR})
 set(CIVETWEB_LIBRARIES civetweb)
 
-# Dependency: live555helper
-add_subdirectory(live555helper EXCLUDE_FROM_ALL)
-set(LIVE555HELPER_LIBRARIES liblive555helper)
-
 function(set_global_target_properties target)
 
     target_include_directories(${target} SYSTEM PRIVATE
@@ -191,14 +187,11 @@ function(set_global_target_properties target)
     target_link_libraries(${target} PRIVATE
         ${WEBRTC_LIBRARIES}
         ${CIVETWEB_LIBRARIES}
-        ${LIVE555HELPER_LIBRARIES}
         Threads::Threads
         dl
     )
     target_compile_definitions(${target} PRIVATE
         WEBRTC_POSIX
-        HAVE_LIVE555 # live555helper
-        NO_OPENSSL=1 # live555helper
     )
     target_compile_options(${target} PRIVATE
         "-fno-rtti"

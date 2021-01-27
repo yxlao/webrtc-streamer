@@ -21,23 +21,25 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "OggDemuxedTrack.hh"
 #include "OggFile.hh"
 
-OggDemuxedTrack::OggDemuxedTrack(UsageEnvironment& env, unsigned trackNumber, OggDemux& sourceDemux)
-  : FramedSource(env),
-    fOurTrackNumber(trackNumber), fOurSourceDemux(sourceDemux),
-    fCurrentPageIsContinuation(False) {
-  fNextPresentationTime.tv_sec = 0; fNextPresentationTime.tv_usec = 0;
+OggDemuxedTrack::OggDemuxedTrack(UsageEnvironment& env,
+                                 unsigned trackNumber,
+                                 OggDemux& sourceDemux)
+    : FramedSource(env),
+      fOurTrackNumber(trackNumber),
+      fOurSourceDemux(sourceDemux),
+      fCurrentPageIsContinuation(False) {
+    fNextPresentationTime.tv_sec = 0;
+    fNextPresentationTime.tv_usec = 0;
 }
 
 OggDemuxedTrack::~OggDemuxedTrack() {
-  fOurSourceDemux.removeTrack(fOurTrackNumber);
+    fOurSourceDemux.removeTrack(fOurTrackNumber);
 }
 
-void OggDemuxedTrack::doGetNextFrame() {
-  fOurSourceDemux.continueReading();
-}
+void OggDemuxedTrack::doGetNextFrame() { fOurSourceDemux.continueReading(); }
 
 char const* OggDemuxedTrack::MIMEtype() const {
-  OggTrack* track = fOurSourceDemux.fOurFile.lookup(fOurTrackNumber);
-  if (track == NULL) return "(unknown)"; // shouldn't happen
-  return track->mimeType;
+    OggTrack* track = fOurSourceDemux.fOurFile.lookup(fOurTrackNumber);
+    if (track == NULL) return "(unknown)";  // shouldn't happen
+    return track->mimeType;
 }

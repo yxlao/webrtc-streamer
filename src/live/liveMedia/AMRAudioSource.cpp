@@ -21,18 +21,15 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "AMRAudioSource.hh"
 
 AMRAudioSource::AMRAudioSource(UsageEnvironment& env,
-			       Boolean isWideband, unsigned numChannels)
-  : FramedSource(env),
-    fIsWideband(isWideband), fNumChannels(numChannels), fLastFrameHeader(0) {
-}
+                               Boolean isWideband,
+                               unsigned numChannels)
+    : FramedSource(env),
+      fIsWideband(isWideband),
+      fNumChannels(numChannels),
+      fLastFrameHeader(0) {}
 
-AMRAudioSource::~AMRAudioSource() {
-}
+AMRAudioSource::~AMRAudioSource() {}
 
-char const* AMRAudioSource::MIMEtype() const {
-  return "audio/AMR";
-}
+char const* AMRAudioSource::MIMEtype() const { return "audio/AMR"; }
 
-Boolean AMRAudioSource::isAMRAudioSource() const {
-  return True;
-}
+Boolean AMRAudioSource::isAMRAudioSource() const { return True; }

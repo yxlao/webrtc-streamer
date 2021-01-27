@@ -21,29 +21,34 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "MPEG2TransportStreamDemux.hh"
 #include "MPEG2TransportStreamParser.hh"
 
-MPEG2TransportStreamDemux* MPEG2TransportStreamDemux
-::createNew(UsageEnvironment& env, FramedSource* inputSource,
-	    FramedSource::onCloseFunc* onCloseFunc, void* onCloseClientData) {
-  return new MPEG2TransportStreamDemux(env, inputSource, onCloseFunc, onCloseClientData);
+MPEG2TransportStreamDemux* MPEG2TransportStreamDemux ::createNew(
+        UsageEnvironment& env,
+        FramedSource* inputSource,
+        FramedSource::onCloseFunc* onCloseFunc,
+        void* onCloseClientData) {
+    return new MPEG2TransportStreamDemux(env, inputSource, onCloseFunc,
+                                         onCloseClientData);
 }
 
-MPEG2TransportStreamDemux
-::MPEG2TransportStreamDemux(UsageEnvironment& env, FramedSource* inputSource,
-			    FramedSource::onCloseFunc* onCloseFunc, void* onCloseClientData)
-  : Medium(env),
-    fOnCloseFunc(onCloseFunc), fOnCloseClientData(onCloseClientData) {
-  fParser = new MPEG2TransportStreamParser(inputSource, handleEndOfFile, this);
+MPEG2TransportStreamDemux ::MPEG2TransportStreamDemux(
+        UsageEnvironment& env,
+        FramedSource* inputSource,
+        FramedSource::onCloseFunc* onCloseFunc,
+        void* onCloseClientData)
+    : Medium(env),
+      fOnCloseFunc(onCloseFunc),
+      fOnCloseClientData(onCloseClientData) {
+    fParser =
+            new MPEG2TransportStreamParser(inputSource, handleEndOfFile, this);
 }
 
-MPEG2TransportStreamDemux::~MPEG2TransportStreamDemux() {
-  delete fParser;
-}
+MPEG2TransportStreamDemux::~MPEG2TransportStreamDemux() { delete fParser; }
 
 void MPEG2TransportStreamDemux::handleEndOfFile(void* clientData) {
-  ((MPEG2TransportStreamDemux*)clientData)->handleEndOfFile();
+    ((MPEG2TransportStreamDemux*)clientData)->handleEndOfFile();
 }
 
 void MPEG2TransportStreamDemux::handleEndOfFile() {
-  if (fOnCloseFunc != NULL) (*fOnCloseFunc)(fOnCloseClientData);
-  delete this;
+    if (fOnCloseFunc != NULL) (*fOnCloseFunc)(fOnCloseClientData);
+    delete this;
 }

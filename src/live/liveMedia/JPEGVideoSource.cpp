@@ -20,26 +20,21 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #include "JPEGVideoSource.hh"
 
-JPEGVideoSource::JPEGVideoSource(UsageEnvironment& env)
-  : FramedSource(env) {
-}
+JPEGVideoSource::JPEGVideoSource(UsageEnvironment& env) : FramedSource(env) {}
 
-JPEGVideoSource::~JPEGVideoSource() {
-}
+JPEGVideoSource::~JPEGVideoSource() {}
 
 u_int8_t const* JPEGVideoSource::quantizationTables(u_int8_t& precision,
-						    u_int16_t& length) {
-  // Default implementation
-  precision = 0;
-  length = 0;
-  return NULL;
+                                                    u_int16_t& length) {
+    // Default implementation
+    precision = 0;
+    length = 0;
+    return NULL;
 }
 
 u_int16_t JPEGVideoSource::restartInterval() {
-  // Default implementation
-  return 0;
+    // Default implementation
+    return 0;
 }
 
-Boolean JPEGVideoSource::isJPEGVideoSource() const {
-  return True;
-}
+Boolean JPEGVideoSource::isJPEGVideoSource() const { return True; }

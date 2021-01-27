@@ -24,124 +24,115 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 //#include <string.h>
 //#include "GroupsockHelper.hh"
 
-
 H263plusVideoStreamParser::H263plusVideoStreamParser(
-                              H263plusVideoStreamFramer* usingSource,
-                              FramedSource* inputSource)
-                              : StreamParser(inputSource,
-                                   FramedSource::handleClosure,
-                                   usingSource,
-                                   &H263plusVideoStreamFramer::continueReadProcessing,
-                                   usingSource),
-                                fUsingSource(usingSource),
-                                fnextTR(0),
-                                fcurrentPT(0)
-{
-   memset(fStates, 0, sizeof(fStates));
-   memset(&fNextInfo, 0, sizeof(fNextInfo));
-   memset(&fCurrentInfo, 0, sizeof(fCurrentInfo));
-   memset(&fMaxBitrateCtx, 0, sizeof(fMaxBitrateCtx));
-   memset(fNextHeader,0, H263_REQUIRE_HEADER_SIZE_BYTES);
+        H263plusVideoStreamFramer *usingSource, FramedSource *inputSource)
+    : StreamParser(inputSource,
+                   FramedSource::handleClosure,
+                   usingSource,
+                   &H263plusVideoStreamFramer::continueReadProcessing,
+                   usingSource),
+      fUsingSource(usingSource),
+      fnextTR(0),
+      fcurrentPT(0) {
+    memset(fStates, 0, sizeof(fStates));
+    memset(&fNextInfo, 0, sizeof(fNextInfo));
+    memset(&fCurrentInfo, 0, sizeof(fCurrentInfo));
+    memset(&fMaxBitrateCtx, 0, sizeof(fMaxBitrateCtx));
+    memset(fNextHeader, 0, H263_REQUIRE_HEADER_SIZE_BYTES);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-H263plusVideoStreamParser::~H263plusVideoStreamParser()
-{
+H263plusVideoStreamParser::~H263plusVideoStreamParser() {}
+
+///////////////////////////////////////////////////////////////////////////////
+void H263plusVideoStreamParser::restoreSavedParserState() {
+    StreamParser::restoreSavedParserState();
+    fTo = fSavedTo;
+    fNumTruncatedBytes = fSavedNumTruncatedBytes;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void H263plusVideoStreamParser::restoreSavedParserState()
-{
-   StreamParser::restoreSavedParserState();
-   fTo = fSavedTo;
-   fNumTruncatedBytes = fSavedNumTruncatedBytes;
+void H263plusVideoStreamParser::setParseState() {
+    fSavedTo = fTo;
+    fSavedNumTruncatedBytes = fNumTruncatedBytes;
+    saveParserState();  // Needed for the parsing process in StreamParser
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void H263plusVideoStreamParser::setParseState()
-{
-   fSavedTo = fTo;
-   fSavedNumTruncatedBytes = fNumTruncatedBytes;
-   saveParserState();  // Needed for the parsing process in StreamParser
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-void H263plusVideoStreamParser::registerReadInterest(
-                                   unsigned char* to,
-                                   unsigned maxSize)
-{
-   fStartOfFrame = fTo = fSavedTo = to;
-   fLimit = to + maxSize;
-   fMaxSize = maxSize;
-   fNumTruncatedBytes = fSavedNumTruncatedBytes = 0;
+void H263plusVideoStreamParser::registerReadInterest(unsigned char *to,
+                                                     unsigned maxSize) {
+    fStartOfFrame = fTo = fSavedTo = to;
+    fLimit = to + maxSize;
+    fMaxSize = maxSize;
+    fNumTruncatedBytes = fSavedNumTruncatedBytes = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // parse() ,  derived from H263Creator of MPEG4IP, h263.c
-unsigned H263plusVideoStreamParser::parse(u_int64_t & currentDuration)
-{
+unsigned H263plusVideoStreamParser::parse(u_int64_t &currentDuration) {
+    //   u_int8_t       frameBuffer[H263_BUFFER_SIZE]; // The input buffer
+    // Pointer which tells LoadNextH263Object where to read data to
+    //   u_int8_t*      pFrameBuffer = fTo + H263_REQUIRE_HEADER_SIZE_BYTES;
+    u_int32_t frameSize;  // The current frame size
+                          // Pointer to receive address of the header data
+                          //   u_int8_t*      pCurrentHeader;// = pFrameBuffer;
+    //   u_int64_t      currentDuration;  // The current frame's duration
+    u_int8_t trDifference;  // The current TR difference
+                            // The previous TR difference
+    //   u_int8_t       prevTrDifference = H263_BASIC_FRAME_RATE;
+    //   u_int64_t      totalDuration = 0;// Duration accumulator
+    //   u_int64_t      avgBitrate;       // Average bitrate
+    //   u_int64_t      totalBytes = 0;   // Size accumulator
 
-//   u_int8_t       frameBuffer[H263_BUFFER_SIZE]; // The input buffer
-                 // Pointer which tells LoadNextH263Object where to read data to
-//   u_int8_t*      pFrameBuffer = fTo + H263_REQUIRE_HEADER_SIZE_BYTES;
-   u_int32_t      frameSize;        // The current frame size
-                                // Pointer to receive address of the header data
-//   u_int8_t*      pCurrentHeader;// = pFrameBuffer;
-//   u_int64_t      currentDuration;  // The current frame's duration
-   u_int8_t       trDifference;     // The current TR difference
-                                   // The previous TR difference
-//   u_int8_t       prevTrDifference = H263_BASIC_FRAME_RATE;
-//   u_int64_t      totalDuration = 0;// Duration accumulator
-//   u_int64_t      avgBitrate;       // Average bitrate
-//   u_int64_t      totalBytes = 0;   // Size accumulator
+    try  // The get data routines of the class FramedFilter returns an error
+         // when
+    {    // the buffer is empty. This occurs at the beginning and at the end of
+         // the file.
+        fCurrentInfo = fNextInfo;
 
+        // Parse 1 frame
+        // For the first time, only the first frame's header is returned.
+        // The second time the full first frame is returned
+        frameSize = parseH263Frame();
 
-   try    // The get data routines of the class FramedFilter returns an error when
-   {      // the buffer is empty. This occurs at the beginning and at the end of the file.
-      fCurrentInfo = fNextInfo;
+        currentDuration = 0;
+        if ((frameSize > 0)) {
+            // We were able to acquire a frame from the input.
 
-      // Parse 1 frame
-      // For the first time, only the first frame's header is returned.
-      // The second time the full first frame is returned
-      frameSize = parseH263Frame();
-
-      currentDuration = 0;
-      if ((frameSize > 0)){
-         // We were able to acquire a frame from the input.
-
-         // Parse the returned frame header (if any)
-         if (!ParseShortHeader(fTo, &fNextInfo)) {
+            // Parse the returned frame header (if any)
+            if (!ParseShortHeader(fTo, &fNextInfo)) {
 #ifdef DEBUG
-	   fprintf(stderr,"H263plusVideoStreamParser: Fatal error\n");
+                fprintf(stderr, "H263plusVideoStreamParser: Fatal error\n");
 #endif
-	 }
+            }
 
-         trDifference = GetTRDifference(fNextInfo.tr, fCurrentInfo.tr);
+            trDifference = GetTRDifference(fNextInfo.tr, fCurrentInfo.tr);
 
-         // calculate the current frame duration
-         currentDuration = CalculateDuration(trDifference);
+            // calculate the current frame duration
+            currentDuration = CalculateDuration(trDifference);
 
-         // Accumulate the frame's size and duration for avgBitrate calculation
-         //totalDuration += currentDuration;
-         //totalBytes += frameSize;
-         //  If needed, recalculate bitrate information
-         //    if (h263Bitrates)
-         //GetMaxBitrate(&fMaxBitrateCtx, frameSize, prevTrDifference);
-         //prevTrDifference = trDifference;
+            // Accumulate the frame's size and duration for avgBitrate
+            // calculation
+            // totalDuration += currentDuration;
+            // totalBytes += frameSize;
+            //  If needed, recalculate bitrate information
+            //    if (h263Bitrates)
+            // GetMaxBitrate(&fMaxBitrateCtx, frameSize, prevTrDifference);
+            // prevTrDifference = trDifference;
 
-	 setParseState(); // Needed for the parsing process in StreamParser
-      }
-   } catch (int /*e*/) {
+            setParseState();  // Needed for the parsing process in StreamParser
+        }
+    } catch (int /*e*/) {
 #ifdef DEBUG
-      fprintf(stderr, "H263plusVideoStreamParser::parse() EXCEPTION (This is normal behavior - *not* an error)\n");
+        fprintf(stderr,
+                "H263plusVideoStreamParser::parse() EXCEPTION (This is normal "
+                "behavior - *not* an error)\n");
 #endif
-      frameSize=0;
-   }
+        frameSize = 0;
+    }
 
-   return frameSize;
+    return frameSize;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // parseH263Frame derived from LoadNextH263Object of MPEG4IP
@@ -163,58 +154,59 @@ unsigned H263plusVideoStreamParser::parse(u_int64_t & currentDuration)
 // Returns the total number of bytes read.
 // Uses FrameFileSource intantiated by constructor.
 ///////////////////////////////////////////////////////////////////////////////
-int H263plusVideoStreamParser::parseH263Frame( )
-{
-   char     row = 0;
-   u_int8_t * bufferIndex = fTo;
-   // The buffer end which will allow the loop to leave place for
-   // the additionalBytesNeeded
-   u_int8_t * bufferEnd = fTo + fMaxSize - ADDITIONAL_BYTES_NEEDED - 1;
+int H263plusVideoStreamParser::parseH263Frame() {
+    char row = 0;
+    u_int8_t *bufferIndex = fTo;
+    // The buffer end which will allow the loop to leave place for
+    // the additionalBytesNeeded
+    u_int8_t *bufferEnd = fTo + fMaxSize - ADDITIONAL_BYTES_NEEDED - 1;
 
-   memcpy(fTo, fNextHeader, H263_REQUIRE_HEADER_SIZE_BYTES);
-   bufferIndex += H263_REQUIRE_HEADER_SIZE_BYTES;
+    memcpy(fTo, fNextHeader, H263_REQUIRE_HEADER_SIZE_BYTES);
+    bufferIndex += H263_REQUIRE_HEADER_SIZE_BYTES;
 
+    // The state table and the following loop implements a state machine
+    // enabling us to read bytes from the file until (and inclusing) the
+    // requested start code (00 00 8X) is found
 
-   // The state table and the following loop implements a state machine enabling
-   // us to read bytes from the file until (and inclusing) the requested
-   // start code (00 00 8X) is found
+    // Initialize the states array, if it hasn't been initialized yet...
+    if (!fStates[0][0]) {
+        // One 00 was read
+        fStates[0][0] = 1;
+        // Two sequential 0x00 ware read
+        fStates[1][0] = fStates[2][0] = 2;
+        // A full start code was read
+        fStates[2][128] = fStates[2][129] = fStates[2][130] = fStates[2][131] =
+                -1;
+    }
 
-   // Initialize the states array, if it hasn't been initialized yet...
-   if (!fStates[0][0]) {
-      // One 00 was read
-      fStates[0][0] = 1;
-      // Two sequential 0x00 ware read
-      fStates[1][0] = fStates[2][0] = 2;
-      // A full start code was read
-      fStates[2][128] = fStates[2][129] = fStates[2][130] = fStates[2][131] = -1;
-   }
+    // Read data from file into the output buffer until either a start code
+    // is found, or the end of file has been reached.
+    do {
+        *bufferIndex = get1Byte();
+    } while ((bufferIndex < bufferEnd) &&  // We have place in the buffer
+             ((row = fStates[(unsigned char)row][*(bufferIndex++)]) !=
+              -1));  // Start code was not found
 
-   // Read data from file into the output buffer until either a start code
-   // is found, or the end of file has been reached.
-   do {
-      *bufferIndex = get1Byte();
-   } while ((bufferIndex < bufferEnd) &&                    // We have place in the buffer
-            ((row = fStates[(unsigned char)row][*(bufferIndex++)]) != -1)); // Start code was not found
+    if (row != -1) {
+        fprintf(stderr, "%s: Buffer too small (%ld)\n",
+                "h263reader:", bufferEnd - fTo + ADDITIONAL_BYTES_NEEDED);
+        return 0;
+    }
 
-   if (row != -1) {
-       fprintf(stderr, "%s: Buffer too small (%ld)\n",
-               "h263reader:", bufferEnd - fTo + ADDITIONAL_BYTES_NEEDED);
-       return 0;
-   }
+    // Cool ... now we have a start code
+    // Now we just have to read the additionalBytesNeeded
+    getBytes(bufferIndex, ADDITIONAL_BYTES_NEEDED);
+    memcpy(fNextHeader, bufferIndex - H263_STARTCODE_SIZE_BYTES,
+           H263_REQUIRE_HEADER_SIZE_BYTES);
 
-   // Cool ... now we have a start code
-   // Now we just have to read the additionalBytesNeeded
-   getBytes(bufferIndex, ADDITIONAL_BYTES_NEEDED);
-   memcpy(fNextHeader, bufferIndex - H263_STARTCODE_SIZE_BYTES, H263_REQUIRE_HEADER_SIZE_BYTES);
+    int sz = bufferIndex - fTo - H263_STARTCODE_SIZE_BYTES;
 
-	int sz = bufferIndex - fTo - H263_STARTCODE_SIZE_BYTES;
+    if (sz == 5)  // first frame
+        memcpy(fTo, fTo + H263_REQUIRE_HEADER_SIZE_BYTES,
+               H263_REQUIRE_HEADER_SIZE_BYTES);
 
-   if (sz == 5) // first frame
-      memcpy(fTo, fTo+H263_REQUIRE_HEADER_SIZE_BYTES, H263_REQUIRE_HEADER_SIZE_BYTES);
-
-   return sz;
+    return sz;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // ParseShortHeader - service routine that accepts a buffer containing a frame
@@ -244,31 +236,32 @@ int H263plusVideoStreamParser::parseH263Frame( )
 //      frame and the sync - or "frame type" - bit. It reports success or
 //      failure to the calling function.
 ////////////////////////////////////////////////////////////////////////////////
-bool H263plusVideoStreamParser::ParseShortHeader(
-                                   u_int8_t *headerBuffer,
-                                   H263INFO *outputInfoStruct)
-{
-   u_int8_t fmt = 0;
-   // Extract temporal reference (TR) from the buffer (bits 22-29 inclusive)
-   outputInfoStruct->tr  = (headerBuffer[2] << 6) & 0xC0; // 2 LS bits out of the 3rd byte
-   outputInfoStruct->tr |= (headerBuffer[3] >> 2) & 0x3F; // 6 MS bits out of the 4th byte
-   // Extract the FMT part of PTYPE from the buffer (bits 35-37 inclusive)
-   fmt = (headerBuffer[4] >> 2) & 0x07; // bits 3-5 ouf of the 5th byte
-   // If PTYPE is not supported, return a failure notice to the calling function
-   // FIXME: PLUSPTYPE is not supported
-   if (fmt == 0x07) {
-      return false;
-   }
-   // If PTYPE is supported, calculate the current width and height according to
-   // a predefined table
-   if (!GetWidthAndHeight(fmt, &(outputInfoStruct->width),
-                               &(outputInfoStruct->height))) {
-      return false;
-   }
-   // Extract the frame-type bit, which is the 9th bit of PTYPE (bit 38)
-   outputInfoStruct->isSyncFrame = !(headerBuffer[4] & 0x02);
+bool H263plusVideoStreamParser::ParseShortHeader(u_int8_t *headerBuffer,
+                                                 H263INFO *outputInfoStruct) {
+    u_int8_t fmt = 0;
+    // Extract temporal reference (TR) from the buffer (bits 22-29 inclusive)
+    outputInfoStruct->tr =
+            (headerBuffer[2] << 6) & 0xC0;  // 2 LS bits out of the 3rd byte
+    outputInfoStruct->tr |=
+            (headerBuffer[3] >> 2) & 0x3F;  // 6 MS bits out of the 4th byte
+    // Extract the FMT part of PTYPE from the buffer (bits 35-37 inclusive)
+    fmt = (headerBuffer[4] >> 2) & 0x07;  // bits 3-5 ouf of the 5th byte
+    // If PTYPE is not supported, return a failure notice to the calling
+    // function
+    // FIXME: PLUSPTYPE is not supported
+    if (fmt == 0x07) {
+        return false;
+    }
+    // If PTYPE is supported, calculate the current width and height according
+    // to a predefined table
+    if (!GetWidthAndHeight(fmt, &(outputInfoStruct->width),
+                           &(outputInfoStruct->height))) {
+        return false;
+    }
+    // Extract the frame-type bit, which is the 9th bit of PTYPE (bit 38)
+    outputInfoStruct->isSyncFrame = !(headerBuffer[4] & 0x02);
 
-  return true;
+    return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -286,34 +279,33 @@ bool H263plusVideoStreamParser::ParseShortHeader(
 // Outputs:
 //      This function returns the up-to-date maximum bitrate
 ////////////////////////////////////////////////////////////////////////////////
-void H263plusVideoStreamParser::GetMaxBitrate( MaxBitrate_CTX *ctx,
-                                               u_int32_t      frameSize,
-                                               u_int8_t       frameTRDiff)
-{
-   if (frameTRDiff == 0)
-      return;
+void H263plusVideoStreamParser::GetMaxBitrate(MaxBitrate_CTX *ctx,
+                                              u_int32_t frameSize,
+                                              u_int8_t frameTRDiff) {
+    if (frameTRDiff == 0) return;
 
-   // Calculate the current frame's bitrate as bits per TR unit (round the result
-   // upwards)
-   u_int32_t frameBitrate = frameSize * 8 / frameTRDiff + 1;
+    // Calculate the current frame's bitrate as bits per TR unit (round the
+    // result upwards)
+    u_int32_t frameBitrate = frameSize * 8 / frameTRDiff + 1;
 
-   // for each TRdiff received,
-   while (frameTRDiff--) {
-      // Subtract the oldest bitrate entry from the current bitrate
-      ctx->windowBitrate -= ctx->bitrateTable[ctx->tableIndex];
-      // Update the oldest bitrate entry with the current frame's bitrate
-      ctx->bitrateTable[ctx->tableIndex] = frameBitrate;
-      // Add the current frame's bitrate to the current bitrate
-      ctx->windowBitrate += frameBitrate;
-      // Check if we have a new maximum bitrate
-      if (ctx->windowBitrate > ctx->maxBitrate) {
-         ctx->maxBitrate = ctx->windowBitrate;
-	  }
-      // Advance the table index
-      // Wrapping around the bitrateTable size
-      ctx->tableIndex = (ctx->tableIndex + 1) %
-        ( sizeof(ctx->bitrateTable) / sizeof(ctx->bitrateTable[0]) );
-   }
+    // for each TRdiff received,
+    while (frameTRDiff--) {
+        // Subtract the oldest bitrate entry from the current bitrate
+        ctx->windowBitrate -= ctx->bitrateTable[ctx->tableIndex];
+        // Update the oldest bitrate entry with the current frame's bitrate
+        ctx->bitrateTable[ctx->tableIndex] = frameBitrate;
+        // Add the current frame's bitrate to the current bitrate
+        ctx->windowBitrate += frameBitrate;
+        // Check if we have a new maximum bitrate
+        if (ctx->windowBitrate > ctx->maxBitrate) {
+            ctx->maxBitrate = ctx->windowBitrate;
+        }
+        // Advance the table index
+        // Wrapping around the bitrateTable size
+        ctx->tableIndex =
+                (ctx->tableIndex + 1) %
+                (sizeof(ctx->bitrateTable) / sizeof(ctx->bitrateTable[0]));
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -326,73 +318,62 @@ void H263plusVideoStreamParser::GetMaxBitrate( MaxBitrate_CTX *ctx,
 // Inputs: trDiff - The current frame's duration in TR units
 // Return: The current frame's duration in milli-seconds
 ////////////////////////////////////////////////////////////////////////////////
-u_int64_t H263plusVideoStreamParser::CalculateDuration(u_int8_t trDiff)
-{
-  u_int64_t        nextPT;          // The next frame's presentation time in milli-seconds
-  u_int64_t        duration;        // The current frame's duration in milli-seconds
+u_int64_t H263plusVideoStreamParser::CalculateDuration(u_int8_t trDiff) {
+    u_int64_t nextPT;    // The next frame's presentation time in milli-seconds
+    u_int64_t duration;  // The current frame's duration in milli-seconds
 
-  fnextTR += trDiff;
-  // Calculate the next frame's presentation time, in milli-seconds
-  nextPT = (fnextTR * 1001) / H263_BASIC_FRAME_RATE;
-  // The frame's duration is the difference between the next presentation
-  // time and the current presentation time.
-  duration = nextPT - fcurrentPT;
-  // "Remember" the next presentation time for the next time this function is called
-  fcurrentPT = nextPT;
+    fnextTR += trDiff;
+    // Calculate the next frame's presentation time, in milli-seconds
+    nextPT = (fnextTR * 1001) / H263_BASIC_FRAME_RATE;
+    // The frame's duration is the difference between the next presentation
+    // time and the current presentation time.
+    duration = nextPT - fcurrentPT;
+    // "Remember" the next presentation time for the next time this function is
+    // called
+    fcurrentPT = nextPT;
 
-  return duration;
+    return duration;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool H263plusVideoStreamParser::GetWidthAndHeight( u_int8_t  fmt,
-                                                   u_int16_t *width,
-                                                   u_int16_t *height)
-{
-   // The 'fmt' corresponds to bits 5-7 of the PTYPE
-  static struct {
-      u_int16_t width;
-      u_int16_t height;
-   } const dimensionsTable[8] = {
-	   { 0,    0 },      // 000 - 0 - forbidden, generates an error
-	   { 128,  96 },     // 001 - 1 - Sub QCIF
-	   { 176,  144 },    // 010 - 2 - QCIF
-	   { 352,  288 },    // 011 - 3 - CIF
-	   { 704,  576 },    // 100 - 4 - 4CIF
-	   { 1409, 1152 },   // 101 - 5 - 16CIF
-	   { 0,    0 },      // 110 - 6 - reserved, generates an error
-	   { 0,    0 }       // 111 - 7 - extended, not supported by profile 0
-   };
+bool H263plusVideoStreamParser::GetWidthAndHeight(u_int8_t fmt,
+                                                  u_int16_t *width,
+                                                  u_int16_t *height) {
+    // The 'fmt' corresponds to bits 5-7 of the PTYPE
+    static struct {
+        u_int16_t width;
+        u_int16_t height;
+    } const dimensionsTable[8] = {
+            {0, 0},        // 000 - 0 - forbidden, generates an error
+            {128, 96},     // 001 - 1 - Sub QCIF
+            {176, 144},    // 010 - 2 - QCIF
+            {352, 288},    // 011 - 3 - CIF
+            {704, 576},    // 100 - 4 - 4CIF
+            {1409, 1152},  // 101 - 5 - 16CIF
+            {0, 0},        // 110 - 6 - reserved, generates an error
+            {0, 0}         // 111 - 7 - extended, not supported by profile 0
+    };
 
-   if (fmt > 7)
-      return false;
+    if (fmt > 7) return false;
 
-   *width  = dimensionsTable[fmt].width;
-   *height = dimensionsTable[fmt].height;
+    *width = dimensionsTable[fmt].width;
+    *height = dimensionsTable[fmt].height;
 
-   if (*width  == 0)
-     return false;
+    if (*width == 0) return false;
 
-   return true;
+    return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-u_int8_t H263plusVideoStreamParser::GetTRDifference(
-                                              u_int8_t nextTR,
-                                              u_int8_t currentTR)
-{
-   if (currentTR > nextTR) {
-      // Wrap around 255...
-      return nextTR + (256 - currentTR);
-   } else {
-      return nextTR - currentTR;
-   }
+u_int8_t H263plusVideoStreamParser::GetTRDifference(u_int8_t nextTR,
+                                                    u_int8_t currentTR) {
+    if (currentTR > nextTR) {
+        // Wrap around 255...
+        return nextTR + (256 - currentTR);
+    } else {
+        return nextTR - currentTR;
+    }
 }
-
-
-
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -418,11 +399,10 @@ u_int8_t H263plusVideoStreamParser::GetTRDifference(
 
 // The following structure holds information extracted from each frame's header:
 typedef struct _H263INFO {
-  u_int8_t  tr;                 // Temporal Reference, used in duration calculation
-  u_int16_t width;              // Width of the picture
-  u_int16_t height;             // Height of the picture
-  bool      isSyncFrame;        // Frame type (true = I frame = "sync" frame)
-} H263INFO;
+  u_int8_t  tr;                 // Temporal Reference, used in duration
+calculation u_int16_t width;              // Width of the picture u_int16_t
+height;             // Height of the picture bool      isSyncFrame;        //
+Frame type (true = I frame = "sync" frame) } H263INFO;
 
 // Context for the GetMaxBitrate function
 typedef struct _MaxBitrate_CTX {
@@ -609,9 +589,11 @@ MP4TrackId H263Creator(MP4FileHandle outputFileHandle,
  *      inputFileHandle - The handle of the input file
  *      frameBuffer - buffer where to place read data
  *      frameBufferSize - in/out parameter indicating the size of the buffer on
- *                          entry and the number of bytes copied to the buffer upon
+ *                          entry and the number of bytes copied to the buffer
+upon
  *                          return
- *      additionalBytesNeeded - indicates how many additional bytes are to be read
+ *      additionalBytesNeeded - indicates how many additional bytes are to be
+read
  *                          from the next frame's header (over the 3 bytes that
  *                          are already read).
  *                          NOTE: This number MUST be > 0
@@ -658,12 +640,11 @@ static int LoadNextH263Object(  FILE           *inputFileHandle,
       *frameBufferSize = frameBuffer - bufferStart;
       return 1;
     }
-  } while ((frameBuffer < bufferEnd) &&                    // We have place in the buffer
-           ((row = states[row][*(frameBuffer++)]) != -1)); // Start code was not found
-  if (row != -1) {
-    fprintf(stderr, "%s: Buffer too small (%u)\n",
-            ProgName, bufferEnd - bufferStart + additionalBytesNeeded);
-    return 0;
+  } while ((frameBuffer < bufferEnd) &&                    // We have place in
+the buffer
+           ((row = states[row][*(frameBuffer++)]) != -1)); // Start code was not
+found if (row != -1) { fprintf(stderr, "%s: Buffer too small (%u)\n", ProgName,
+bufferEnd - bufferStart + additionalBytesNeeded); return 0;
   }
 
   // Cool ... now we have a start code
@@ -672,9 +653,8 @@ static int LoadNextH263Object(  FILE           *inputFileHandle,
 
   // Now we just have to read the additionalBytesNeeded
   if(fread(frameBuffer, additionalBytesNeeded, 1, inputFileHandle) != 1) {
-    /// We got a start code but can't read additionalBytesNeeded ... that's a fatal error
-    fprintf(stderr, "%s: Invalid H263 bitstream\n", ProgName);
-    return 0;
+    /// We got a start code but can't read additionalBytesNeeded ... that's a
+fatal error fprintf(stderr, "%s: Invalid H263 bitstream\n", ProgName); return 0;
   }
 
   return 1;
@@ -715,8 +695,9 @@ static bool ParseShortHeader(   u_int8_t       *headerBuffer,
 {
   u_int8_t fmt = 0;
   // Extract temporal reference (TR) from the buffer (bits 22-29 inclusive)
-  outputInfoStruct->tr  = (headerBuffer[2] << 6) & 0xC0; // 2 LS bits out of the 3rd byte
-  outputInfoStruct->tr |= (headerBuffer[3] >> 2) & 0x3F; // 6 MS bits out of the 4th byte
+  outputInfoStruct->tr  = (headerBuffer[2] << 6) & 0xC0; // 2 LS bits out of the
+3rd byte outputInfoStruct->tr |= (headerBuffer[3] >> 2) & 0x3F; // 6 MS bits out
+of the 4th byte
   // Extract the FMT part of PTYPE from the buffer (bits 35-37 inclusive)
   fmt = (headerBuffer[4] >> 2) & 0x07; // bits 3-5 ouf of the 5th byte
   // If PTYPE is not supported, return a failure notice to the calling function
@@ -795,10 +776,11 @@ static void GetMaxBitrate(      MaxBitrate_CTX *ctx,
  * /
 static MP4Duration CalculateDuration(u_int8_t   trDiff)
 {
-  static u_int32_t const    nextTR    = 0;   // The next frame's presentation time in TR units
-  static MP4Duration const  currentPT = 0;   // The current frame's presentation time in milli-seconds
-  MP4Duration         nextPT;          // The next frame's presentation time in milli-seconds
-  MP4Duration         duration;        // The current frame's duration in milli-seconds
+  static u_int32_t const    nextTR    = 0;   // The next frame's presentation
+time in TR units static MP4Duration const  currentPT = 0;   // The current
+frame's presentation time in milli-seconds MP4Duration         nextPT; // The
+next frame's presentation time in milli-seconds MP4Duration         duration; //
+The current frame's duration in milli-seconds
 
   nextTR += trDiff;
   // Calculate the next frame's presentation time, in milli-seconds
@@ -856,4 +838,3 @@ static u_int8_t GetTRDifference(u_int8_t        nextTR,
 }
 
 */
-

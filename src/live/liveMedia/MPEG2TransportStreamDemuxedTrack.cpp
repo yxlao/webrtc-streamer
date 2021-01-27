@@ -20,15 +20,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #include "MPEG2TransportStreamParser.hh"
 
-MPEG2TransportStreamDemuxedTrack
-::MPEG2TransportStreamDemuxedTrack(MPEG2TransportStreamParser& ourParser, u_int16_t pid)
-  : FramedSource(ourParser.envir()),
-    fOurParser(ourParser), fPID(pid) {
-}
+MPEG2TransportStreamDemuxedTrack ::MPEG2TransportStreamDemuxedTrack(
+        MPEG2TransportStreamParser& ourParser, u_int16_t pid)
+    : FramedSource(ourParser.envir()), fOurParser(ourParser), fPID(pid) {}
 
-MPEG2TransportStreamDemuxedTrack::~MPEG2TransportStreamDemuxedTrack() {
-}
+MPEG2TransportStreamDemuxedTrack::~MPEG2TransportStreamDemuxedTrack() {}
 
 void MPEG2TransportStreamDemuxedTrack::doGetNextFrame() {
-  fOurParser.continueParsing();
+    fOurParser.continueParsing();
 }

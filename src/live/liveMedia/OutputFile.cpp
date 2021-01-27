@@ -30,31 +30,31 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "OutputFile.hh"
 
 FILE* OpenOutputFile(UsageEnvironment& env, char const* fileName) {
-  FILE* fid;
+    FILE* fid;
 
-  // Check for special case 'file names': "stdout" and "stderr"
-  if (strcmp(fileName, "stdout") == 0) {
-    fid = stdout;
+    // Check for special case 'file names': "stdout" and "stderr"
+    if (strcmp(fileName, "stdout") == 0) {
+        fid = stdout;
 #if (defined(__WIN32__) || defined(_WIN32)) && !defined(_WIN32_WCE)
-    _setmode(_fileno(stdout), _O_BINARY);       // convert to binary mode
+        _setmode(_fileno(stdout), _O_BINARY);  // convert to binary mode
 #endif
-  } else if (strcmp(fileName, "stderr") == 0) {
-    fid = stderr;
+    } else if (strcmp(fileName, "stderr") == 0) {
+        fid = stderr;
 #if (defined(__WIN32__) || defined(_WIN32)) && !defined(_WIN32_WCE)
-    _setmode(_fileno(stderr), _O_BINARY);       // convert to binary mode
+        _setmode(_fileno(stderr), _O_BINARY);  // convert to binary mode
 #endif
-  } else {
-    fid = fopen(fileName, "wb");
-  }
+    } else {
+        fid = fopen(fileName, "wb");
+    }
 
-  if (fid == NULL) {
-    env.setResultMsg("unable to open file \"", fileName, "\"");
-  }
+    if (fid == NULL) {
+        env.setResultMsg("unable to open file \"", fileName, "\"");
+    }
 
-  return fid;
+    return fid;
 }
 
 void CloseOutputFile(FILE* fid) {
-  // Don't close 'stdout' or 'stderr', in case we want to use it again later.
-  if (fid != NULL && fid != stdout && fid != stderr) fclose(fid);
+    // Don't close 'stdout' or 'stderr', in case we want to use it again later.
+    if (fid != NULL && fid != stdout && fid != stderr) fclose(fid);
 }

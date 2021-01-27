@@ -20,47 +20,42 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #include "AC3AudioRTPSource.hh"
 
-AC3AudioRTPSource*
-AC3AudioRTPSource::createNew(UsageEnvironment& env,
-			      Groupsock* RTPgs,
-			      unsigned char rtpPayloadFormat,
-			      unsigned rtpTimestampFrequency) {
-  return new AC3AudioRTPSource(env, RTPgs, rtpPayloadFormat,
-				rtpTimestampFrequency);
+AC3AudioRTPSource* AC3AudioRTPSource::createNew(
+        UsageEnvironment& env,
+        Groupsock* RTPgs,
+        unsigned char rtpPayloadFormat,
+        unsigned rtpTimestampFrequency) {
+    return new AC3AudioRTPSource(env, RTPgs, rtpPayloadFormat,
+                                 rtpTimestampFrequency);
 }
 
 AC3AudioRTPSource::AC3AudioRTPSource(UsageEnvironment& env,
-				       Groupsock* rtpGS,
-				       unsigned char rtpPayloadFormat,
-				       unsigned rtpTimestampFrequency)
-  : MultiFramedRTPSource(env, rtpGS,
-			 rtpPayloadFormat, rtpTimestampFrequency) {
+                                     Groupsock* rtpGS,
+                                     unsigned char rtpPayloadFormat,
+                                     unsigned rtpTimestampFrequency)
+    : MultiFramedRTPSource(
+              env, rtpGS, rtpPayloadFormat, rtpTimestampFrequency) {}
+
+AC3AudioRTPSource::~AC3AudioRTPSource() {}
+
+Boolean AC3AudioRTPSource ::processSpecialHeader(
+        BufferedPacket* packet, unsigned& resultSpecialHeaderSize) {
+    unsigned char* headerStart = packet->data();
+    unsigned packetSize = packet->dataSize();
+
+    // There's a 2-byte payload header at the beginning:
+    if (packetSize < 2) return False;
+    resultSpecialHeaderSize = 2;
+
+    unsigned char FT = headerStart[0] & 0x03;
+    fCurrentPacketBeginsFrame = FT != 3;
+
+    // The RTP "M" (marker) bit indicates the last fragment of a frame.
+    // In case the sender did not set the "M" bit correctly, we also test for FT
+    // == 0:
+    fCurrentPacketCompletesFrame = packet->rtpMarkerBit() || FT == 0;
+
+    return True;
 }
 
-AC3AudioRTPSource::~AC3AudioRTPSource() {
-}
-
-Boolean AC3AudioRTPSource
-::processSpecialHeader(BufferedPacket* packet,
-		       unsigned& resultSpecialHeaderSize) {
-  unsigned char* headerStart = packet->data();
-  unsigned packetSize = packet->dataSize();
-
-  // There's a 2-byte payload header at the beginning:
-  if (packetSize < 2) return False;
-  resultSpecialHeaderSize = 2;
-
-  unsigned char FT = headerStart[0]&0x03;
-  fCurrentPacketBeginsFrame = FT != 3;
-
-  // The RTP "M" (marker) bit indicates the last fragment of a frame.
-  // In case the sender did not set the "M" bit correctly, we also test for FT == 0:
-  fCurrentPacketCompletesFrame = packet->rtpMarkerBit() || FT == 0;
-
-  return True;
-}
-
-char const* AC3AudioRTPSource::MIMEtype() const {
-  return "audio/AC3";
-}
-
+char const* AC3AudioRTPSource::MIMEtype() const { return "audio/AC3"; }

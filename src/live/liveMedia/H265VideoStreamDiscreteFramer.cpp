@@ -23,24 +23,29 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #include "H265VideoStreamDiscreteFramer.hh"
 
-H265VideoStreamDiscreteFramer*
-H265VideoStreamDiscreteFramer
-::createNew(UsageEnvironment& env, FramedSource* inputSource,
-	    Boolean includeStartCodeInOutput, Boolean insertAccessUnitDelimiters) {
-  return new H265VideoStreamDiscreteFramer(env, inputSource,
-					   includeStartCodeInOutput, insertAccessUnitDelimiters);
+H265VideoStreamDiscreteFramer* H265VideoStreamDiscreteFramer ::createNew(
+        UsageEnvironment& env,
+        FramedSource* inputSource,
+        Boolean includeStartCodeInOutput,
+        Boolean insertAccessUnitDelimiters) {
+    return new H265VideoStreamDiscreteFramer(env, inputSource,
+                                             includeStartCodeInOutput,
+                                             insertAccessUnitDelimiters);
 }
 
-H265VideoStreamDiscreteFramer
-::H265VideoStreamDiscreteFramer(UsageEnvironment& env, FramedSource* inputSource,
-				Boolean includeStartCodeInOutput, Boolean insertAccessUnitDelimiters)
-  : H264or5VideoStreamDiscreteFramer(265, env, inputSource,
-				     includeStartCodeInOutput, insertAccessUnitDelimiters) {
-}
+H265VideoStreamDiscreteFramer ::H265VideoStreamDiscreteFramer(
+        UsageEnvironment& env,
+        FramedSource* inputSource,
+        Boolean includeStartCodeInOutput,
+        Boolean insertAccessUnitDelimiters)
+    : H264or5VideoStreamDiscreteFramer(265,
+                                       env,
+                                       inputSource,
+                                       includeStartCodeInOutput,
+                                       insertAccessUnitDelimiters) {}
 
-H265VideoStreamDiscreteFramer::~H265VideoStreamDiscreteFramer() {
-}
+H265VideoStreamDiscreteFramer::~H265VideoStreamDiscreteFramer() {}
 
 Boolean H265VideoStreamDiscreteFramer::isH265VideoStreamFramer() const {
-  return True;
+    return True;
 }

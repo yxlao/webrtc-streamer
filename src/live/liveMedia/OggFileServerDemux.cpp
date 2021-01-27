@@ -21,89 +21,108 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "OggFileServerDemux.hh"
 #include "OggFileServerMediaSubsession.hh"
 
-void OggFileServerDemux
-::createNew(UsageEnvironment& env, char const* fileName,
-	    onCreationFunc* onCreation, void* onCreationClientData) {
-  (void)new OggFileServerDemux(env, fileName,
-			       onCreation, onCreationClientData);
+void OggFileServerDemux ::createNew(UsageEnvironment& env,
+                                    char const* fileName,
+                                    onCreationFunc* onCreation,
+                                    void* onCreationClientData) {
+    (void)new OggFileServerDemux(env, fileName, onCreation,
+                                 onCreationClientData);
 }
 
 ServerMediaSubsession* OggFileServerDemux::newServerMediaSubsession() {
-  u_int32_t dummyResultTrackNumber;
-  return newServerMediaSubsession(dummyResultTrackNumber);
+    u_int32_t dummyResultTrackNumber;
+    return newServerMediaSubsession(dummyResultTrackNumber);
 }
 
-ServerMediaSubsession* OggFileServerDemux
-::newServerMediaSubsession(u_int32_t& resultTrackNumber) {
-  resultTrackNumber = 0;
+ServerMediaSubsession* OggFileServerDemux ::newServerMediaSubsession(
+        u_int32_t& resultTrackNumber) {
+    resultTrackNumber = 0;
 
-  OggTrack* nextTrack = fIter->next();
-  if (nextTrack == NULL) return NULL;
+    OggTrack* nextTrack = fIter->next();
+    if (nextTrack == NULL) return NULL;
 
-  return newServerMediaSubsessionByTrackNumber(nextTrack->trackNumber);
+    return newServerMediaSubsessionByTrackNumber(nextTrack->trackNumber);
 }
 
-ServerMediaSubsession* OggFileServerDemux
-::newServerMediaSubsessionByTrackNumber(u_int32_t trackNumber) {
-  OggTrack* track = fOurOggFile->lookup(trackNumber);
-  if (track == NULL) return NULL;
+ServerMediaSubsession*
+OggFileServerDemux ::newServerMediaSubsessionByTrackNumber(
+        u_int32_t trackNumber) {
+    OggTrack* track = fOurOggFile->lookup(trackNumber);
+    if (track == NULL) return NULL;
 
-  ServerMediaSubsession* result = OggFileServerMediaSubsession::createNew(*this, track);
-  if (result != NULL) {
+    ServerMediaSubsession* result =
+            OggFileServerMediaSubsession::createNew(*this, track);
+    if (result != NULL) {
 #ifdef DEBUG
-    fprintf(stderr, "Created 'ServerMediaSubsession' object for track #%d: (%s)\n", track->trackNumber, track->mimeType);
+        fprintf(stderr,
+                "Created 'ServerMediaSubsession' object for track #%d: (%s)\n",
+                track->trackNumber, track->mimeType);
 #endif
-  }
+    }
 
-  return result;
+    return result;
 }
 
-FramedSource* OggFileServerDemux::newDemuxedTrack(unsigned clientSessionId, u_int32_t trackNumber) {
-  OggDemux* demuxToUse = NULL;
+FramedSource* OggFileServerDemux::newDemuxedTrack(unsigned clientSessionId,
+                                                  u_int32_t trackNumber) {
+    OggDemux* demuxToUse = NULL;
 
-  if (clientSessionId != 0 && clientSessionId == fLastClientSessionId) {
-    demuxToUse = fLastCreatedDemux; // use the same demultiplexor as before
-      // Note: This code relies upon the fact that the creation of streams for different
-      // client sessions do not overlap - so all demuxed tracks are created for one "OggDemux" at a time.
-      // Also, the "clientSessionId != 0" test is a hack, because 'session 0' is special; its audio and video streams
-      // are created and destroyed one-at-a-time, rather than both streams being
-      // created, and then (later) both streams being destroyed (as is the case
-      // for other ('real') session ids).  Because of this, a separate demultiplexor is used for each 'session 0' track.
-  }
+    if (clientSessionId != 0 && clientSessionId == fLastClientSessionId) {
+        demuxToUse =
+                fLastCreatedDemux;  // use the same demultiplexor as before
+                                    // Note: This code relies upon the fact that
+                                    // the creation of streams for different
+                                    // client sessions do not overlap - so all
+                                    // demuxed tracks are created for one
+                                    // "OggDemux" at a time. Also, the
+                                    // "clientSessionId != 0" test is a hack,
+                                    // because 'session 0' is special; its audio
+                                    // and video streams are created and
+                                    // destroyed one-at-a-time, rather than both
+                                    // streams being created, and then (later)
+                                    // both streams being destroyed (as is the
+                                    // case for other ('real') session ids).
+                                    // Because of this, a separate demultiplexor
+                                    // is used for each 'session 0' track.
+    }
 
-  if (demuxToUse == NULL) demuxToUse = fOurOggFile->newDemux();
+    if (demuxToUse == NULL) demuxToUse = fOurOggFile->newDemux();
 
-  fLastClientSessionId = clientSessionId;
-  fLastCreatedDemux = demuxToUse;
+    fLastClientSessionId = clientSessionId;
+    fLastCreatedDemux = demuxToUse;
 
-  return demuxToUse->newDemuxedTrackByTrackNumber(trackNumber);
+    return demuxToUse->newDemuxedTrackByTrackNumber(trackNumber);
 }
 
-OggFileServerDemux
-::OggFileServerDemux(UsageEnvironment& env, char const* fileName,
-		     onCreationFunc* onCreation, void* onCreationClientData)
-  : Medium(env),
-    fFileName(fileName), fOnCreation(onCreation), fOnCreationClientData(onCreationClientData),
-    fIter(NULL/*until the OggFile is created*/),
-    fLastClientSessionId(0), fLastCreatedDemux(NULL) {
-  OggFile::createNew(env, fileName, onOggFileCreation, this);
+OggFileServerDemux ::OggFileServerDemux(UsageEnvironment& env,
+                                        char const* fileName,
+                                        onCreationFunc* onCreation,
+                                        void* onCreationClientData)
+    : Medium(env),
+      fFileName(fileName),
+      fOnCreation(onCreation),
+      fOnCreationClientData(onCreationClientData),
+      fIter(NULL /*until the OggFile is created*/),
+      fLastClientSessionId(0),
+      fLastCreatedDemux(NULL) {
+    OggFile::createNew(env, fileName, onOggFileCreation, this);
 }
 
 OggFileServerDemux::~OggFileServerDemux() {
-  Medium::close(fOurOggFile);
+    Medium::close(fOurOggFile);
 
-  delete fIter;
+    delete fIter;
 }
 
 void OggFileServerDemux::onOggFileCreation(OggFile* newFile, void* clientData) {
-  ((OggFileServerDemux*)clientData)->onOggFileCreation(newFile);
+    ((OggFileServerDemux*)clientData)->onOggFileCreation(newFile);
 }
 
 void OggFileServerDemux::onOggFileCreation(OggFile* newFile) {
-  fOurOggFile = newFile;
+    fOurOggFile = newFile;
 
-  fIter = new OggTrackTableIterator(fOurOggFile->trackTable());
+    fIter = new OggTrackTableIterator(fOurOggFile->trackTable());
 
-  // Now, call our own creation notification function:
-  if (fOnCreation != NULL) (*fOnCreation)(this, fOnCreationClientData);
+    // Now, call our own creation notification function:
+    if (fOnCreation != NULL) (*fOnCreation)(this, fOnCreationClientData);
 }

@@ -19,27 +19,26 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #include <AudioInputDevice.hh>
 
-AudioInputDevice
-::AudioInputDevice(UsageEnvironment& env, unsigned char bitsPerSample,
-		   unsigned char numChannels,
-		   unsigned samplingFrequency, unsigned granularityInMS)
-  : FramedSource(env), fBitsPerSample(bitsPerSample),
-    fNumChannels(numChannels), fSamplingFrequency(samplingFrequency),
-    fGranularityInMS(granularityInMS) {
-}
+AudioInputDevice ::AudioInputDevice(UsageEnvironment& env,
+                                    unsigned char bitsPerSample,
+                                    unsigned char numChannels,
+                                    unsigned samplingFrequency,
+                                    unsigned granularityInMS)
+    : FramedSource(env),
+      fBitsPerSample(bitsPerSample),
+      fNumChannels(numChannels),
+      fSamplingFrequency(samplingFrequency),
+      fGranularityInMS(granularityInMS) {}
 
-AudioInputDevice::~AudioInputDevice() {
-}
+AudioInputDevice::~AudioInputDevice() {}
 
 char** AudioInputDevice::allowedDeviceNames = NULL;
 
 ////////// AudioPortNames implementation //////////
 
-AudioPortNames::AudioPortNames()
-: numPorts(0), portName(NULL) {
-}
+AudioPortNames::AudioPortNames() : numPorts(0), portName(NULL) {}
 
 AudioPortNames::~AudioPortNames() {
-	for (unsigned i = 0; i < numPorts; ++i) delete portName[i];
-	delete portName;
+    for (unsigned i = 0; i < numPorts; ++i) delete portName[i];
+    delete portName;
 }

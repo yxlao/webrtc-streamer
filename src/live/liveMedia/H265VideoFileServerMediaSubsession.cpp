@@ -26,96 +26,108 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 H265VideoFileServerMediaSubsession*
 H265VideoFileServerMediaSubsession::createNew(UsageEnvironment& env,
-					      char const* fileName,
-					      Boolean reuseFirstSource) {
-  return new H265VideoFileServerMediaSubsession(env, fileName, reuseFirstSource);
+                                              char const* fileName,
+                                              Boolean reuseFirstSource) {
+    return new H265VideoFileServerMediaSubsession(env, fileName,
+                                                  reuseFirstSource);
 }
 
-H265VideoFileServerMediaSubsession::H265VideoFileServerMediaSubsession(UsageEnvironment& env,
-								       char const* fileName, Boolean reuseFirstSource)
-  : FileServerMediaSubsession(env, fileName, reuseFirstSource),
-    fAuxSDPLine(NULL), fDoneFlag(0), fDummyRTPSink(NULL) {
-}
+H265VideoFileServerMediaSubsession::H265VideoFileServerMediaSubsession(
+        UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource)
+    : FileServerMediaSubsession(env, fileName, reuseFirstSource),
+      fAuxSDPLine(NULL),
+      fDoneFlag(0),
+      fDummyRTPSink(NULL) {}
 
 H265VideoFileServerMediaSubsession::~H265VideoFileServerMediaSubsession() {
-  delete[] fAuxSDPLine;
+    delete[] fAuxSDPLine;
 }
 
 static void afterPlayingDummy(void* clientData) {
-  H265VideoFileServerMediaSubsession* subsess = (H265VideoFileServerMediaSubsession*)clientData;
-  subsess->afterPlayingDummy1();
+    H265VideoFileServerMediaSubsession* subsess =
+            (H265VideoFileServerMediaSubsession*)clientData;
+    subsess->afterPlayingDummy1();
 }
 
 void H265VideoFileServerMediaSubsession::afterPlayingDummy1() {
-  // Unschedule any pending 'checking' task:
-  envir().taskScheduler().unscheduleDelayedTask(nextTask());
-  // Signal the event loop that we're done:
-  setDoneFlag();
+    // Unschedule any pending 'checking' task:
+    envir().taskScheduler().unscheduleDelayedTask(nextTask());
+    // Signal the event loop that we're done:
+    setDoneFlag();
 }
 
 static void checkForAuxSDPLine(void* clientData) {
-  H265VideoFileServerMediaSubsession* subsess = (H265VideoFileServerMediaSubsession*)clientData;
-  subsess->checkForAuxSDPLine1();
+    H265VideoFileServerMediaSubsession* subsess =
+            (H265VideoFileServerMediaSubsession*)clientData;
+    subsess->checkForAuxSDPLine1();
 }
 
 void H265VideoFileServerMediaSubsession::checkForAuxSDPLine1() {
-  nextTask() = NULL;
+    nextTask() = NULL;
 
-  char const* dasl;
-  if (fAuxSDPLine != NULL) {
-    // Signal the event loop that we're done:
-    setDoneFlag();
-  } else if (fDummyRTPSink != NULL && (dasl = fDummyRTPSink->auxSDPLine()) != NULL) {
-    fAuxSDPLine = strDup(dasl);
-    fDummyRTPSink = NULL;
+    char const* dasl;
+    if (fAuxSDPLine != NULL) {
+        // Signal the event loop that we're done:
+        setDoneFlag();
+    } else if (fDummyRTPSink != NULL &&
+               (dasl = fDummyRTPSink->auxSDPLine()) != NULL) {
+        fAuxSDPLine = strDup(dasl);
+        fDummyRTPSink = NULL;
 
-    // Signal the event loop that we're done:
-    setDoneFlag();
-  } else if (!fDoneFlag) {
-    // try again after a brief delay:
-    int uSecsToDelay = 100000; // 100 ms
-    nextTask() = envir().taskScheduler().scheduleDelayedTask(uSecsToDelay,
-			      (TaskFunc*)checkForAuxSDPLine, this);
-  }
+        // Signal the event loop that we're done:
+        setDoneFlag();
+    } else if (!fDoneFlag) {
+        // try again after a brief delay:
+        int uSecsToDelay = 100000;  // 100 ms
+        nextTask() = envir().taskScheduler().scheduleDelayedTask(
+                uSecsToDelay, (TaskFunc*)checkForAuxSDPLine, this);
+    }
 }
 
-char const* H265VideoFileServerMediaSubsession::getAuxSDPLine(RTPSink* rtpSink, FramedSource* inputSource) {
-  if (fAuxSDPLine != NULL) return fAuxSDPLine; // it's already been set up (for a previous client)
+char const* H265VideoFileServerMediaSubsession::getAuxSDPLine(
+        RTPSink* rtpSink, FramedSource* inputSource) {
+    if (fAuxSDPLine != NULL)
+        return fAuxSDPLine;  // it's already been set up (for a previous client)
 
-  if (fDummyRTPSink == NULL) { // we're not already setting it up for another, concurrent stream
-    // Note: For H265 video files, the 'config' information (used for several payload-format
-    // specific parameters in the SDP description) isn't known until we start reading the file.
-    // This means that "rtpSink"s "auxSDPLine()" will be NULL initially,
-    // and we need to start reading data from our file until this changes.
-    fDummyRTPSink = rtpSink;
+    if (fDummyRTPSink == NULL) {  // we're not already setting it up for
+                                  // another, concurrent stream
+        // Note: For H265 video files, the 'config' information (used for
+        // several payload-format specific parameters in the SDP description)
+        // isn't known until we start reading the file. This means that
+        // "rtpSink"s "auxSDPLine()" will be NULL initially, and we need to
+        // start reading data from our file until this changes.
+        fDummyRTPSink = rtpSink;
 
-    // Start reading the file:
-    fDummyRTPSink->startPlaying(*inputSource, afterPlayingDummy, this);
+        // Start reading the file:
+        fDummyRTPSink->startPlaying(*inputSource, afterPlayingDummy, this);
 
-    // Check whether the sink's 'auxSDPLine()' is ready:
-    checkForAuxSDPLine(this);
-  }
+        // Check whether the sink's 'auxSDPLine()' is ready:
+        checkForAuxSDPLine(this);
+    }
 
-  envir().taskScheduler().doEventLoop(&fDoneFlag);
+    envir().taskScheduler().doEventLoop(&fDoneFlag);
 
-  return fAuxSDPLine;
+    return fAuxSDPLine;
 }
 
-FramedSource* H265VideoFileServerMediaSubsession::createNewStreamSource(unsigned /*clientSessionId*/, unsigned& estBitrate) {
-  estBitrate = 500; // kbps, estimate
+FramedSource* H265VideoFileServerMediaSubsession::createNewStreamSource(
+        unsigned /*clientSessionId*/, unsigned& estBitrate) {
+    estBitrate = 500;  // kbps, estimate
 
-  // Create the video source:
-  ByteStreamFileSource* fileSource = ByteStreamFileSource::createNew(envir(), fFileName);
-  if (fileSource == NULL) return NULL;
-  fFileSize = fileSource->fileSize();
+    // Create the video source:
+    ByteStreamFileSource* fileSource =
+            ByteStreamFileSource::createNew(envir(), fFileName);
+    if (fileSource == NULL) return NULL;
+    fFileSize = fileSource->fileSize();
 
-  // Create a framer for the Video Elementary Stream:
-  return H265VideoStreamFramer::createNew(envir(), fileSource);
+    // Create a framer for the Video Elementary Stream:
+    return H265VideoStreamFramer::createNew(envir(), fileSource);
 }
 
-RTPSink* H265VideoFileServerMediaSubsession
-::createNewRTPSink(Groupsock* rtpGroupsock,
-		   unsigned char rtpPayloadTypeIfDynamic,
-		   FramedSource* /*inputSource*/) {
-  return H265VideoRTPSink::createNew(envir(), rtpGroupsock, rtpPayloadTypeIfDynamic);
+RTPSink* H265VideoFileServerMediaSubsession ::createNewRTPSink(
+        Groupsock* rtpGroupsock,
+        unsigned char rtpPayloadTypeIfDynamic,
+        FramedSource* /*inputSource*/) {
+    return H265VideoRTPSink::createNew(envir(), rtpGroupsock,
+                                       rtpPayloadTypeIfDynamic);
 }

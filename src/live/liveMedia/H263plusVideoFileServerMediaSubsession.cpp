@@ -29,36 +29,37 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 H263plusVideoFileServerMediaSubsession*
 H263plusVideoFileServerMediaSubsession::createNew(UsageEnvironment& env,
-						  char const* fileName,
-						  Boolean reuseFirstSource) {
-  return new H263plusVideoFileServerMediaSubsession(env, fileName, reuseFirstSource);
+                                                  char const* fileName,
+                                                  Boolean reuseFirstSource) {
+    return new H263plusVideoFileServerMediaSubsession(env, fileName,
+                                                      reuseFirstSource);
 }
 
-H263plusVideoFileServerMediaSubsession
-::H263plusVideoFileServerMediaSubsession(UsageEnvironment& env,
-					 char const* fileName,
-					 Boolean reuseFirstSource)
-  : FileServerMediaSubsession(env, fileName, reuseFirstSource) {
+H263plusVideoFileServerMediaSubsession ::H263plusVideoFileServerMediaSubsession(
+        UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource)
+    : FileServerMediaSubsession(env, fileName, reuseFirstSource) {}
+
+H263plusVideoFileServerMediaSubsession::
+        ~H263plusVideoFileServerMediaSubsession() {}
+
+FramedSource* H263plusVideoFileServerMediaSubsession ::createNewStreamSource(
+        unsigned /*clientSessionId*/, unsigned& estBitrate) {
+    estBitrate = 500;  // kbps, estimate ??
+
+    // Create the video source:
+    ByteStreamFileSource* fileSource =
+            ByteStreamFileSource::createNew(envir(), fFileName);
+    if (fileSource == NULL) return NULL;
+    fFileSize = fileSource->fileSize();
+
+    // Create a framer for the Video Elementary Stream:
+    return H263plusVideoStreamFramer::createNew(envir(), fileSource);
 }
 
-H263plusVideoFileServerMediaSubsession::~H263plusVideoFileServerMediaSubsession() {
-}
-
-FramedSource* H263plusVideoFileServerMediaSubsession
-::createNewStreamSource(unsigned /*clientSessionId*/, unsigned& estBitrate) {
-  estBitrate = 500; // kbps, estimate ??
-
-  // Create the video source:
-  ByteStreamFileSource* fileSource = ByteStreamFileSource::createNew(envir(), fFileName);
-  if (fileSource == NULL) return NULL;
-  fFileSize = fileSource->fileSize();
-
-  // Create a framer for the Video Elementary Stream:
-  return H263plusVideoStreamFramer::createNew(envir(), fileSource);
-}
-
-RTPSink* H263plusVideoFileServerMediaSubsession::createNewRTPSink(Groupsock* rtpGroupsock,
-								  unsigned char rtpPayloadTypeIfDynamic,
-								  FramedSource* /*inputSource*/) {
-  return H263plusVideoRTPSink::createNew(envir(), rtpGroupsock, rtpPayloadTypeIfDynamic);
+RTPSink* H263plusVideoFileServerMediaSubsession::createNewRTPSink(
+        Groupsock* rtpGroupsock,
+        unsigned char rtpPayloadTypeIfDynamic,
+        FramedSource* /*inputSource*/) {
+    return H263plusVideoRTPSink::createNew(envir(), rtpGroupsock,
+                                           rtpPayloadTypeIfDynamic);
 }

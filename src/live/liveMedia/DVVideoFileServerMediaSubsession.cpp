@@ -24,80 +24,95 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "ByteStreamFileSource.hh"
 #include "DVVideoStreamFramer.hh"
 
-DVVideoFileServerMediaSubsession*
-DVVideoFileServerMediaSubsession::createNew(UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource) {
-  return new DVVideoFileServerMediaSubsession(env, fileName, reuseFirstSource);
+DVVideoFileServerMediaSubsession* DVVideoFileServerMediaSubsession::createNew(
+        UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource) {
+    return new DVVideoFileServerMediaSubsession(env, fileName,
+                                                reuseFirstSource);
 }
 
-DVVideoFileServerMediaSubsession
-::DVVideoFileServerMediaSubsession(UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource)
-  : FileServerMediaSubsession(env, fileName, reuseFirstSource),
-    fFileDuration(0.0) {
+DVVideoFileServerMediaSubsession ::DVVideoFileServerMediaSubsession(
+        UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource)
+    : FileServerMediaSubsession(env, fileName, reuseFirstSource),
+      fFileDuration(0.0) {}
+
+DVVideoFileServerMediaSubsession::~DVVideoFileServerMediaSubsession() {}
+
+FramedSource* DVVideoFileServerMediaSubsession ::createNewStreamSource(
+        unsigned /*clientSessionId*/, unsigned& estBitrate) {
+    // Create the video source:
+    ByteStreamFileSource* fileSource =
+            ByteStreamFileSource::createNew(envir(), fFileName);
+    if (fileSource == NULL) return NULL;
+    fFileSize = fileSource->fileSize();
+
+    // Create a framer for the Video Elementary Stream:
+    DVVideoStreamFramer* framer = DVVideoStreamFramer::createNew(
+            envir(), fileSource, True /*the file source is seekable*/);
+
+    // Use the framer to figure out the file's duration:
+    unsigned frameSize;
+    double frameDuration;
+    if (framer->getFrameParameters(frameSize, frameDuration)) {
+        fFileDuration = (float)(((int64_t)fFileSize * frameDuration) /
+                                (frameSize * 1000000.0));
+        estBitrate =
+                (unsigned)((8000.0 * frameSize) / frameDuration);  // in kbps
+    } else {
+        estBitrate = 50000;  // kbps, estimate
+    }
+
+    return framer;
 }
 
-DVVideoFileServerMediaSubsession::~DVVideoFileServerMediaSubsession() {
+RTPSink* DVVideoFileServerMediaSubsession::createNewRTPSink(
+        Groupsock* rtpGroupsock,
+        unsigned char rtpPayloadTypeIfDynamic,
+        FramedSource* /*inputSource*/) {
+    return DVVideoRTPSink::createNew(envir(), rtpGroupsock,
+                                     rtpPayloadTypeIfDynamic);
 }
 
-FramedSource* DVVideoFileServerMediaSubsession
-::createNewStreamSource(unsigned /*clientSessionId*/, unsigned& estBitrate) {
-  // Create the video source:
-  ByteStreamFileSource* fileSource = ByteStreamFileSource::createNew(envir(), fFileName);
-  if (fileSource == NULL) return NULL;
-  fFileSize = fileSource->fileSize();
-
-  // Create a framer for the Video Elementary Stream:
-  DVVideoStreamFramer* framer = DVVideoStreamFramer::createNew(envir(), fileSource, True/*the file source is seekable*/);
-  
-  // Use the framer to figure out the file's duration:
-  unsigned frameSize;
-  double frameDuration;
-  if (framer->getFrameParameters(frameSize, frameDuration)) {
-    fFileDuration = (float)(((int64_t)fFileSize*frameDuration)/(frameSize*1000000.0));
-    estBitrate = (unsigned)((8000.0*frameSize)/frameDuration); // in kbps
-  } else {
-    estBitrate = 50000; // kbps, estimate
-  }
-
-  return framer;
-}
-
-RTPSink* DVVideoFileServerMediaSubsession::createNewRTPSink(Groupsock* rtpGroupsock,
-							    unsigned char rtpPayloadTypeIfDynamic,
-							    FramedSource* /*inputSource*/) {
-  return DVVideoRTPSink::createNew(envir(), rtpGroupsock, rtpPayloadTypeIfDynamic);
-}
-
-char const* DVVideoFileServerMediaSubsession::getAuxSDPLine(RTPSink* rtpSink, FramedSource* inputSource) {
-  return ((DVVideoRTPSink*)rtpSink)->auxSDPLineFromFramer((DVVideoStreamFramer*)inputSource);
+char const* DVVideoFileServerMediaSubsession::getAuxSDPLine(
+        RTPSink* rtpSink, FramedSource* inputSource) {
+    return ((DVVideoRTPSink*)rtpSink)
+            ->auxSDPLineFromFramer((DVVideoStreamFramer*)inputSource);
 }
 
 float DVVideoFileServerMediaSubsession::duration() const {
-  return fFileDuration;
+    return fFileDuration;
 }
 
-void DVVideoFileServerMediaSubsession
-::seekStreamSource(FramedSource* inputSource, double& seekNPT, double streamDuration, u_int64_t& numBytes) {
-  // First, get the file source from "inputSource" (a framer):
-  DVVideoStreamFramer* framer = (DVVideoStreamFramer*)inputSource;
-  ByteStreamFileSource* fileSource = (ByteStreamFileSource*)(framer->inputSource());
+void DVVideoFileServerMediaSubsession ::seekStreamSource(
+        FramedSource* inputSource,
+        double& seekNPT,
+        double streamDuration,
+        u_int64_t& numBytes) {
+    // First, get the file source from "inputSource" (a framer):
+    DVVideoStreamFramer* framer = (DVVideoStreamFramer*)inputSource;
+    ByteStreamFileSource* fileSource =
+            (ByteStreamFileSource*)(framer->inputSource());
 
-  // Then figure out where to seek to within the file:
-  if (fFileDuration > 0.0) {
-    u_int64_t seekByteNumber = (u_int64_t)(((int64_t)fFileSize*seekNPT)/fFileDuration);
-    numBytes = (u_int64_t)(((int64_t)fFileSize*streamDuration)/fFileDuration);
-    fileSource->seekToByteAbsolute(seekByteNumber, numBytes);
-  }
+    // Then figure out where to seek to within the file:
+    if (fFileDuration > 0.0) {
+        u_int64_t seekByteNumber =
+                (u_int64_t)(((int64_t)fFileSize * seekNPT) / fFileDuration);
+        numBytes = (u_int64_t)(((int64_t)fFileSize * streamDuration) /
+                               fFileDuration);
+        fileSource->seekToByteAbsolute(seekByteNumber, numBytes);
+    }
 }
 
-void DVVideoFileServerMediaSubsession
-::setStreamSourceDuration(FramedSource* inputSource, double streamDuration, u_int64_t& numBytes) {
-  // First, get the file source from "inputSource" (a framer):
-  DVVideoStreamFramer* framer = (DVVideoStreamFramer*)inputSource;
-  ByteStreamFileSource* fileSource = (ByteStreamFileSource*)(framer->inputSource());
+void DVVideoFileServerMediaSubsession ::setStreamSourceDuration(
+        FramedSource* inputSource, double streamDuration, u_int64_t& numBytes) {
+    // First, get the file source from "inputSource" (a framer):
+    DVVideoStreamFramer* framer = (DVVideoStreamFramer*)inputSource;
+    ByteStreamFileSource* fileSource =
+            (ByteStreamFileSource*)(framer->inputSource());
 
-  // Then figure out how many bytes to limit the streaming to:
-  if (fFileDuration > 0.0) {
-    numBytes = (u_int64_t)(((int64_t)fFileSize*streamDuration)/fFileDuration);
-    fileSource->seekToByteRelative(0, numBytes);
-  }
+    // Then figure out how many bytes to limit the streaming to:
+    if (fFileDuration > 0.0) {
+        numBytes = (u_int64_t)(((int64_t)fFileSize * streamDuration) /
+                               fFileDuration);
+        fileSource->seekToByteRelative(0, numBytes);
+    }
 }

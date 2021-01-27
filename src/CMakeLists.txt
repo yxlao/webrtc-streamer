@@ -1,5 +1,5 @@
 function(set_global_target_properties target)
-    add_dependencies(${target} ext_webrtc webrtc_extra)
+    add_dependencies(${target} ext_webrtc_all)
     target_link_directories(${target} PRIVATE
         ${WEBRTC_LIB_DIR}
     )

@@ -38,7 +38,7 @@ target_link_libraries(webrtc-streamer PRIVATE
     Xtst                               # optional: X11 (desktop capture)
 )
 target_include_directories(webrtc-streamer SYSTEM PRIVATE
-    ${WEBRTC_INCLUDE_DIR}
+    ${WEBRTC_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
     live/groupsock/include             # optional: live
     live/liveMedia/include             # optional: live

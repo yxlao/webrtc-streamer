@@ -8,7 +8,7 @@
 ** -------------------------------------------------------------------------*/
 
 #include <iostream>
-#include "environment.h"
+#include <live555helper/environment.h>
 
 Environment::Environment() : Environment(m_stopRef) {}
 

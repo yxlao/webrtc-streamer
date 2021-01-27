@@ -16,7 +16,7 @@
 #include <mutex>
 #include <condition_variable>
 
-#include "environment.h"
+#include <live555helper/environment.h>
 
 #include <libyuv/video_common.h>
 #include <libyuv/convert.h>

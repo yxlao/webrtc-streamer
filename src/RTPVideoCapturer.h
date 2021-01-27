@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "sdpclient.h"
+#include <live555helper/sdpclient.h>
 
 #include "LiveVideoSource.h"
 

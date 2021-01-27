@@ -9,7 +9,7 @@
 **
 ** -------------------------------------------------------------------------*/
 
-#include "sdpclient.h"
+#include <live555helper/sdpclient.h>
 
 SDPClient::SDPClient(Environment& env,
                      Callback* callback,

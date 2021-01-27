@@ -15,7 +15,7 @@
 #include <queue>
 #include <cctype>
 
-#include "environment.h"
+#include <live555helper/environment.h>
 
 #include <pc/local_audio_source.h>
 #include <api/audio_codecs/builtin_audio_decoder_factory.h>

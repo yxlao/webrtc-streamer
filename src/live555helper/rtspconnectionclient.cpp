@@ -9,7 +9,7 @@
 **
 ** -------------------------------------------------------------------------*/
 
-#include "rtspconnectionclient.h"
+#include <live555helper/rtspconnectionclient.h>
 
 RTSPConnection::RTSPConnection(Environment& env,
                                Callback* callback,

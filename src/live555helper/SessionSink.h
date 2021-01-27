@@ -16,7 +16,7 @@
 typedef SSIZE_T ssize_t;
 #endif
 
-#include "environment.h"
+#include <live555helper/environment.h>
 #include "liveMedia.hh"
 
 static uint8_t H26X_marker[] = {0, 0, 0, 1};

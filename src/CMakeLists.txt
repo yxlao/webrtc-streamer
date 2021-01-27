@@ -20,8 +20,8 @@ target_include_directories(webrtc-streamer SYSTEM PRIVATE
     live/liveMedia/include
     live/UsageEnvironment/include
     live/BasicUsageEnvironment/include
-    live555helper
     civetweb
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 target_compile_definitions(webrtc-streamer PRIVATE
     OPENSSL_API_1_1      # civetweb

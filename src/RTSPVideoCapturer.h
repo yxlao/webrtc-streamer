@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "rtspconnectionclient.h"
+#include <live555helper/rtspconnectionclient.h>
 
 #include "LiveVideoSource.h"
 

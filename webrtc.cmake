@@ -3,7 +3,8 @@ include(ExternalProject)
 ExternalProject_Add(
     ext_webrtc
     PREFIX webrtc
-    URL "/home/yixing/repo/webrtc"
+    DOWNLOAD_COMMAND rm -rf ext_webrtc
+    COMMAND cp -ar /home/yixing/repo/webrtc ext_webrtc
     UPDATE_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""

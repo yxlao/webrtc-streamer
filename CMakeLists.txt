@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(webrtc-streamer)
+project(webrtc-streamer C CXX)
 
 # WebRTC build
 set(WEBRTCROOT "${PROJECT_SOURCE_DIR}/../webrtc" CACHE STRING "WEBRTC root directory")
@@ -143,9 +143,13 @@ file(GLOB_RECURSE WEBRTP2POBJ
 file(GLOB_RECURSE WEBRTTASK
      ${WEBRTCOBJS}/api/task_queue/*${CMAKE_C_OUTPUT_EXTENSION}
      ${WEBRTCOBJS}/rtc_base/rtc_task_queue_*/*${CMAKE_C_OUTPUT_EXTENSION})
-set(WEBRTC_EXTRA_OBJS
-    ${WEBRTJSONCPPCOBJS} ${WEBRTBBRCOBJS} ${WEBRTP2POBJ} ${WEBRTTASK}
-    ${WEBRTCOBJS}/rtc_base/rtc_json/json${CMAKE_C_OUTPUT_EXTENSION})
+set(WEBRTC_EXTRA_SRC
+    ${WEBRTJSONCPPCOBJS}
+    ${WEBRTBBRCOBJS}
+    ${WEBRTP2POBJ}
+    ${WEBRTTASK}
+    ${WEBRTCOBJS}/rtc_base/rtc_json/json${CMAKE_C_OUTPUT_EXTENSION}
+)
 
 # Dependency: WebRTC.
 set(WEBRTC_INCLUDE_DIR
@@ -155,6 +159,12 @@ set(WEBRTC_INCLUDE_DIR
     ${WEBRTCROOT}/src/third_party/jsoncpp/generated
     ${WEBRTCROOT}/src/third_party/libyuv/include
 )
+add_library(webrtc_extra STATIC ${WEBRTC_EXTRA_SRC})
+target_include_directories(webrtc_extra SYSTEM PRIVATE ${WEBRTC_INCLUDE_DIR})
+target_compile_definitions(webrtc_extra PRIVATE WEBRTC_POSIX)
+target_compile_options(webrtc_extra PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>)
+set_target_properties(webrtc_extra PROPERTIES LINKER_LANGUAGE CXX)
+
 set(WEBRTC_LIB_DIR ${WEBRTCOBJS})
 set(WEBRTC_LIBRARIES ${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX})
 
@@ -172,6 +182,7 @@ function(set_global_target_properties target)
         ${WEBRTC_LIB_DIR}
     )
     target_link_libraries(${target} PRIVATE
+        webrtc_extra
         ${WEBRTC_LIBRARIES}
         Threads::Threads
         dl

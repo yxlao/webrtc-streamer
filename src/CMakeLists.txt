@@ -12,7 +12,6 @@ file(GLOB LIVE_SRC
 add_executable(webrtc-streamer
     ${WEBRTC_STREAMER_SRC}
     ${LIVE_SRC}
-    ${WEBRTC_EXTRA_OBJS}
 )
 set_global_target_properties(webrtc-streamer)
 target_include_directories(webrtc-streamer SYSTEM PRIVATE

@@ -34,7 +34,13 @@ if(NOT EXISTS ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/args.gn)
     # rtc_build_libevent=false
 
     set(WEBRTCARGS
-        rtc_include_tests=false\nrtc_enable_protobuf=false\nrtc_build_examples=false\nrtc_build_tools=false\ntreat_warnings_as_errors=false\nrtc_enable_libevent=false\nrtc_build_libevent=false\n
+        rtc_include_tests=false\n
+        rtc_enable_protobuf=false\n
+        rtc_build_examples=false\n
+        rtc_build_tools=false\n
+        treat_warnings_as_errors=false\n
+        rtc_enable_libevent=false\n
+        rtc_build_libevent=false\n
     )
     set(WEBRTCARGS use_custom_libcxx=false\n${WEBRTCARGS})
     # debug/release

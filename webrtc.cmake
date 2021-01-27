@@ -52,6 +52,20 @@ set(NINJA_TARGET
     default_task_queue_factory
 )
 
+# Determined by ExternalProject_Add, but hard-coded here.
+set(WEBRTCROOT ${CMAKE_BINARY_DIR}/webrtc/src/ext_webrtc)
+set(EXTRA_WEBRTC_OBJS
+    ${WEBRTCROOT}/src/out/Release/obj/third_party/jsoncpp/jsoncpp/json_reader.o
+    ${WEBRTCROOT}/src/out/Release/obj/third_party/jsoncpp/jsoncpp/json_value.o
+    ${WEBRTCROOT}/src/out/Release/obj/third_party/jsoncpp/jsoncpp/json_writer.o
+    ${WEBRTCROOT}/src/out/Release/obj/p2p/p2p_server_utils/stun_server.o
+    ${WEBRTCROOT}/src/out/Release/obj/p2p/p2p_server_utils/turn_server.o
+    ${WEBRTCROOT}/src/out/Release/obj/api/task_queue/default_task_queue_factory/default_task_queue_factory_stdlib.o
+    ${WEBRTCROOT}/src/out/Release/obj/api/task_queue/task_queue/task_queue_base.o
+    ${WEBRTCROOT}/src/out/Release/obj/rtc_base/rtc_task_queue_stdlib/task_queue_stdlib.o
+    ${WEBRTCROOT}/src/out/Release/obj/rtc_base/rtc_json/json.o
+)
+
 ExternalProject_Add(
     ext_webrtc
     PREFIX webrtc
@@ -64,6 +78,7 @@ ExternalProject_Add(
     INSTALL_COMMAND ""
     BUILD_ALWAYS ON
     BUILD_IN_SOURCE ON
+    ${BUILD_BYPRODUCTS} ${EXTRA_WEBRTC_OBJS}
 )
 
 ExternalProject_Add_Step(ext_webrtc build_obj
@@ -75,6 +90,19 @@ ExternalProject_Add_Step(ext_webrtc build_obj
     DEPENDERS install
 )
 
-set(WEBRTC_INCLUDE_DIR "") # "/" is critical.
-set(WEBRTC_LIB_DIR "")
+# Is "/" is critical?
+set(WEBRTC_INCLUDE_DIR
+    ${WEBRTCROOT}/src
+    ${WEBRTCROOT}/src/third_party/abseil-cpp
+    ${WEBRTCROOT}/src/third_party/jsoncpp/source/include
+    ${WEBRTCROOT}/src/third_party/jsoncpp/generated
+    ${WEBRTCROOT}/src/third_party/libyuv/include
+)
+set(WEBRTC_LIB_DIR ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/obj)
 set(WEBRTC_LIBRARIES ${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX})
+
+add_library(extra_webrtc_objs STATIC ${EXTRA_WEBRTC_OBJS})
+set_source_files_properties(${EXTRA_WEBRTC_OBJS} PROPERTIES GENERATED TRUE)
+add_dependencies(extra_webrtc_objs ext_webrtc)
+set_target_properties(extra_webrtc_objs PROPERTIES LINKER_LANGUAGE CXX)
+

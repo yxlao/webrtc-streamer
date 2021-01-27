@@ -5,6 +5,8 @@ file(GLOB LIVE_SRC
     live/UsageEnvironment/*.c*
     live/BasicUsageEnvironment/*.c*
     live555helper/*.cpp
+    civetweb/civetweb.c
+    civetweb/CivetServer.cpp
 )
 
 add_executable(webrtc-streamer
@@ -19,9 +21,11 @@ target_include_directories(webrtc-streamer SYSTEM PRIVATE
     live/UsageEnvironment/include
     live/BasicUsageEnvironment/include
     live555helper
+    civetweb
 )
 target_compile_definitions(webrtc-streamer PRIVATE
-    HAVE_LIVE555 # live555helper
+    OPENSSL_API_1_1      # civetweb
+    HAVE_LIVE555         # live555helper
     NO_OPENSSL=1
     BSD=1
     SOCKLEN_T=socklen_t

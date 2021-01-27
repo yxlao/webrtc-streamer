@@ -163,30 +163,16 @@ set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 
-# Dependency: CivetWeb
-add_library(civetweb STATIC
-    ${PROJECT_SOURCE_DIR}/civetweb/src/civetweb.c
-    ${PROJECT_SOURCE_DIR}/civetweb/src/CivetServer.cpp
-)
-target_include_directories(civetweb SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/civetweb/include)
-target_compile_definitions(civetweb PRIVATE OPENSSL_API_1_1)
-set(CIVETWEB_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/civetweb/include)
-set(CIVETWEB_LIB_DIR ${CMAKE_BINARY_DIR})
-set(CIVETWEB_LIBRARIES civetweb)
-
 function(set_global_target_properties target)
 
     target_include_directories(${target} SYSTEM PRIVATE
         ${WEBRTC_INCLUDE_DIR}
-        ${CIVETWEB_INCLUDE_DIR}
     )
     target_link_directories(${target} PRIVATE
         ${WEBRTC_LIB_DIR}
-        ${CIVETWEB_LIB_DIR}
     )
     target_link_libraries(${target} PRIVATE
         ${WEBRTC_LIBRARIES}
-        ${CIVETWEB_LIBRARIES}
         Threads::Threads
         dl
     )

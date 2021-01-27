@@ -1,26 +1,35 @@
 build/
-src/*.o*
+.vscode/
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
 *.a
-*.tar.gz
-webrtc-streamer
-webrtc-streamer.exe
-/node_modules/
-package-lock.json
-*.sln
-*.vcxproj*
-*.tlog
-*.log
-*.pdb
 *.lib
-*.dir
-*.cmake
-*.ilk
-CMakeCache.txt
-CMakeFiles
-*.manifest
-_CPack_Packages
-live
-/.vs/
-/.vscode/
-install_manifest.txt
-Makefile
+
+# Executables
+*.exe
+*.out
+*.app

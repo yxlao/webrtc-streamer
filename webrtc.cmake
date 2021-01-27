@@ -99,10 +99,15 @@ set(WEBRTC_INCLUDE_DIR
     ${WEBRTCROOT}/src/third_party/libyuv/include
 )
 set(WEBRTC_LIB_DIR ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/obj)
-set(WEBRTC_LIBRARIES ${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX})
+set(WEBRTC_LIBRARIES
+    ${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX}
+    ${CMAKE_STATIC_LIBRARY_PREFIX}webrtc_extra${CMAKE_STATIC_LIBRARY_SUFFIX}
+)
 
 add_library(webrtc_extra STATIC ${EXTRA_WEBRTC_OBJS})
 set_source_files_properties(${EXTRA_WEBRTC_OBJS} PROPERTIES GENERATED TRUE)
 add_dependencies(webrtc_extra ext_webrtc)
 set_target_properties(webrtc_extra PROPERTIES LINKER_LANGUAGE CXX)
-
+set_target_properties(webrtc_extra PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY ${WEBRTC_LIB_DIR}
+)

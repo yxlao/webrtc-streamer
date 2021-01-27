@@ -12,7 +12,6 @@ file(GLOB LIVE_SRC
 add_executable(webrtc-streamer
     ${WEBRTC_STREAMER_SRC}
     ${LIVE_SRC}
-    ${WEBRTC_EXTRA_OBJS}
 )
 set_global_target_properties(webrtc-streamer)
 target_include_directories(webrtc-streamer SYSTEM PRIVATE
@@ -26,11 +25,10 @@ target_include_directories(webrtc-streamer SYSTEM PRIVATE
 target_compile_definitions(webrtc-streamer PRIVATE
     OPENSSL_API_1_1      # civetweb
     HAVE_LIVE555         # live555helper
-    NO_OPENSSL=1
-    BSD=1
-    SOCKLEN_T=socklen_t
-    _FILE_OFFSET_BITS=64
-    _LARGEFILE_SOURCE=1
+    NO_OPENSSL=1         # live555helper
+    SOCKLEN_T=socklen_t  # live
+    _FILE_OFFSET_BITS=64 # civetweb
+    _LARGEFILE_SOURCE=1  # civetweb
 )
 
 add_custom_target(copy-html-dir

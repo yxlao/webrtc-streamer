@@ -26,6 +26,7 @@ find_package(Threads REQUIRED)
 
 function(set_global_target_properties target)
 
+    add_dependencies(${target} ext_webrtc webrtc_extra)
     target_include_directories(${target} SYSTEM PRIVATE
         ${WEBRTC_INCLUDE_DIR}
     )

@@ -9,9 +9,9 @@
 
 #ifdef HAVE_LIVE555
 
-#include <rtc_base/logging.h>
-
 #include "FileVideoCapturer.h"
+
+#include <rtc_base/logging.h>
 
 FileVideoCapturer::FileVideoCapturer(
         const std::string& uri, const std::map<std::string, std::string>& opts)

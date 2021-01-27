@@ -25,11 +25,11 @@
 #include "VcmCapturer.h"
 
 #ifdef HAVE_LIVE555
-#include "RTSPVideoCapturer.h"
-#include "RTPVideoCapturer.h"
-#include "FileVideoCapturer.h"
-#include "RTSPAudioCapturer.h"
 #include "FileAudioCapturer.h"
+#include "FileVideoCapturer.h"
+#include "RTPVideoCapturer.h"
+#include "RTSPAudioCapturer.h"
+#include "RTSPVideoCapturer.h"
 #endif
 
 #ifdef USE_X11

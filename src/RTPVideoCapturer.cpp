@@ -9,9 +9,9 @@
 
 #ifdef HAVE_LIVE555
 
-#include <rtc_base/logging.h>
-
 #include "RTPVideoCapturer.h"
+
+#include <rtc_base/logging.h>
 
 RTPVideoCapturer::RTPVideoCapturer(
         const std::string& uri, const std::map<std::string, std::string>& opts)

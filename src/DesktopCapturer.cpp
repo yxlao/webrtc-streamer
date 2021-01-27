@@ -9,9 +9,9 @@
 
 #ifdef USE_X11
 
-#include <rtc_base/logging.h>
-
 #include "DesktopCapturer.h"
+
+#include <rtc_base/logging.h>
 
 void DesktopCapturer::OnCaptureResult(
         webrtc::DesktopCapturer::Result result,

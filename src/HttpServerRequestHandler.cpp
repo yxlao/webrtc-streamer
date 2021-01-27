@@ -7,10 +7,11 @@
 **
 ** -------------------------------------------------------------------------*/
 
-#include <string.h>
-#include <iostream>
-
 #include "HttpServerRequestHandler.h"
+
+#include <string.h>
+
+#include <iostream>
 
 int log_message(const struct mg_connection *conn, const char *message) {
     fprintf(stderr, "%s\n", message);

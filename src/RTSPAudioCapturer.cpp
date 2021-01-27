@@ -9,9 +9,9 @@
 
 #ifdef HAVE_LIVE555
 
-#include <rtc_base/logging.h>
-
 #include "RTSPAudioCapturer.h"
+
+#include <rtc_base/logging.h>
 
 RTSPAudioSource::RTSPAudioSource(
         rtc::scoped_refptr<webrtc::AudioDecoderFactory> audioDecoderFactory,

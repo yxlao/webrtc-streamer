@@ -20,6 +20,7 @@
 #include <media/base/video_common.h>
 #include <media/engine/internal_decoder_factory.h>
 #include <modules/video_coding/h264_sprop_parameter_sets.h>
+#include <rtc_base/logging.h>
 #include <string.h>
 
 #include <condition_variable>

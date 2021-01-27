@@ -9,15 +9,15 @@
 
 #pragma once
 
-#include <thread>
-
 #include <api/video/i420_buffer.h>
-#include <libyuv/video_common.h>
 #include <libyuv/convert.h>
-#include <media/base/video_common.h>
+#include <libyuv/video_common.h>
 #include <media/base/video_broadcaster.h>
-#include <modules/desktop_capture/desktop_capturer.h>
+#include <media/base/video_common.h>
 #include <modules/desktop_capture/desktop_capture_options.h>
+#include <modules/desktop_capture/desktop_capturer.h>
+
+#include <thread>
 
 class DesktopCapturer : public rtc::VideoSourceInterface<webrtc::VideoFrame>,
                         public webrtc::DesktopCapturer::Callback {

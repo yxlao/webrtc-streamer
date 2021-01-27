@@ -16,16 +16,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# set CMAKE_FIND_ROOT_PATH to search package in WebRTC sysroot
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv.*")
-    set(CMAKE_FIND_ROOT_PATH
-        ${WEBRTCROOT}/src/build/linux/debian_sid_arm-sysroot)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64")
-    set(CMAKE_FIND_ROOT_PATH
-        ${WEBRTCROOT}/src/build/linux/debian_sid_arm64-sysroot)
-endif()
-message("CMAKE_FIND_ROOT_PATH = ${CMAKE_FIND_ROOT_PATH}")
-
 # webrtc build
 if(NOT EXISTS ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/args.gn)
     # Example args.gn
@@ -55,51 +45,13 @@ if(NOT EXISTS ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/args.gn)
 
     # enable H264 support
     set(WEBRTCARGS is_chrome_branded=true\n${WEBRTCARGS})
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6.*")
-        set(ENV{PATH}
-            "${WEBRTCROOT}/src/third_party/llvm-build/Release+Asserts/bin:$ENV{PATH}"
-        )
-        file(
-            READ
-            ${WEBRTCROOT}/src/third_party/ffmpeg/chromium/scripts/build_ffmpeg.py
-            filecontent)
-        string(REPLACE "--enable-armv6t2" "--disable-armv6t2" filecontent
-                       "${filecontent}")
-        string(REPLACE "--enable-thumb" "--disable-thumb" filecontent
-                       "${filecontent}")
-        string(REPLACE "--extra-cflags=-march=armv7-a"
-                       "--extra-cflags=-march=armv6" filecontent
-                       "${filecontent}")
-        file(
-            WRITE
-            ${WEBRTCROOT}/src/third_party/ffmpeg/chromium/scripts/build_ffmpeg.py
-            "${filecontent}")
-        execute_process(
-            WORKING_DIRECTORY ${WEBRTCROOT}/src/third_party/ffmpeg
-            COMMAND chromium/scripts/build_ffmpeg.py linux arm --config-only)
-        execute_process(WORKING_DIRECTORY ${WEBRTCROOT}/src/third_party/ffmpeg
-                        COMMAND chromium/scripts/copy_config.sh)
-    endif()
 
     # sound support
     set(WEBRTCARGS rtc_include_pulse_audio=false\n${WEBRTCARGS})
     set(WEBRTCARGS rtc_include_internal_audio_device=false\n${WEBRTCARGS})
 
     # compilation mode depending on target
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6.*")
-        set(WEBRTCARGS
-            target_cpu="arm"\narm_version=6\narm_float_abi="hard"\nenable_libaom=false\n${WEBRTCARGS}
-        )
-    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "armv.*")
-        set(WEBRTCARGS target_cpu="arm"\n${WEBRTCARGS})
-    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64")
-        set(WEBRTCARGS target_cpu="arm64"\n${WEBRTCARGS})
-    endif()
-    if(DEFINED CMAKE_FIND_ROOT_PATH)
-        set(WEBRTCARGS use_sysroot=true\n${WEBRTCARGS})
-    else()
-        set(WEBRTCARGS use_sysroot=false\n${WEBRTCARGS})
-    endif()
+    set(WEBRTCARGS use_sysroot=false\n${WEBRTCARGS})
     set(WEBRTCARGS is_clang=true\n${WEBRTCARGS})
 
     # screen capture support
@@ -214,25 +166,6 @@ function(set_global_target_properties target)
         LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
     )
-
-    # ARM64 specific.
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6.*")
-        target_link_libraries(${target} -Wl,-Bstatic -latomic -Wl,-Bdynamic)
-        add_definitions(-marm -march=armv6 -mfpu=vfp -mfloat-abi=hard)
-    endif()
-    # Static link of stdc++ if available on arm (unresolved symbol on x86-64)
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm.*")
-        include(CheckCXXCompilerFlag)
-        check_cxx_compiler_flag("-static-libgcc" CXX_SUPPORTS_STATIC_LIBGCC)
-        if(CXX_SUPPORTS_STATIC_LIBGCC)
-            target_link_libraries(${target} -static-libgcc)
-        endif()
-        check_cxx_compiler_flag("-static-libstdc++"
-                                CXX_SUPPORTS_STATIC_LIBSTDCPP)
-        if(CXX_SUPPORTS_STATIC_LIBSTDCPP)
-            target_link_libraries(${target} -static-libstdc++)
-        endif()
-    endif()
 
     target_compile_options(${target} PRIVATE
         $<$<COMPILE_LANGUAGE:C>:$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX ${DISABLE_MSVC_WARNINGS}>>

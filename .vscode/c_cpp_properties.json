@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/yixing/repo/webrtc/src",
+                "/home/yixing/repo/webrtc/src/third_party/abseil-cpp",
+                "/home/yixing/repo/webrtc/src/third_party/jsoncpp/source/include",
+                "/home/yixing/repo/webrtc/src/third_party/jsoncpp/generated",
+                "/home/yixing/repo/webrtc/src/third_party/libyuv/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}

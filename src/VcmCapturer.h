@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include <modules/video_capture/video_capture_factory.h>
 #include <media/base/video_broadcaster.h>
+#include <modules/video_capture/video_capture_factory.h>
 
 class VcmCapturer : public rtc::VideoSinkInterface<webrtc::VideoFrame>,
                     public rtc::VideoSourceInterface<webrtc::VideoFrame> {

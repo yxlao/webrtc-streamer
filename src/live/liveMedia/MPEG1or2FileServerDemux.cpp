@@ -19,8 +19,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MPEG1or2FileServerDemux.hh"
-#include "MPEG1or2DemuxedServerMediaSubsession.hh"
+
 #include "ByteStreamFileSource.hh"
+#include "MPEG1or2DemuxedServerMediaSubsession.hh"
 
 MPEG1or2FileServerDemux* MPEG1or2FileServerDemux::createNew(
         UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource) {

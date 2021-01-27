@@ -20,8 +20,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "DVVideoFileServerMediaSubsession.hh"
-#include "DVVideoRTPSink.hh"
+
 #include "ByteStreamFileSource.hh"
+#include "DVVideoRTPSink.hh"
 #include "DVVideoStreamFramer.hh"
 
 DVVideoFileServerMediaSubsession* DVVideoFileServerMediaSubsession::createNew(

@@ -20,8 +20,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "OggFileServerMediaSubsession.hh"
-#include "OggDemuxedTrack.hh"
+
 #include "FramedFilter.hh"
+#include "OggDemuxedTrack.hh"
 
 OggFileServerMediaSubsession* OggFileServerMediaSubsession ::createNew(
         OggFileServerDemux& demux, OggTrack* track) {

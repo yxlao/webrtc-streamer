@@ -19,11 +19,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation of functionality related to the "REGISTER" and "DEREGISTER"
 // commands
 
-#include "RTSPServer.hh"
+#include "GroupsockHelper.hh"
+#include "ProxyServerMediaSession.hh"
 #include "RTSPCommon.hh"
 #include "RTSPRegisterSender.hh"
-#include "ProxyServerMediaSession.hh"
-#include "GroupsockHelper.hh"
+#include "RTSPServer.hh"
 
 ////////// Implementation of "RTSPServer::registerStream()": //////////
 

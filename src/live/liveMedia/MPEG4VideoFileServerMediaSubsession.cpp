@@ -20,8 +20,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MPEG4VideoFileServerMediaSubsession.hh"
-#include "MPEG4ESVideoRTPSink.hh"
+
 #include "ByteStreamFileSource.hh"
+#include "MPEG4ESVideoRTPSink.hh"
 #include "MPEG4VideoStreamFramer.hh"
 
 MPEG4VideoFileServerMediaSubsession*

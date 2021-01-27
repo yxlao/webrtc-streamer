@@ -19,8 +19,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MPEG4ESVideoRTPSink.hh"
-#include "MPEG4VideoStreamFramer.hh"
+
 #include "MPEG4LATMAudioRTPSource.hh"  // for "parseGeneralConfigStr()"
+#include "MPEG4VideoStreamFramer.hh"
 
 MPEG4ESVideoRTPSink ::MPEG4ESVideoRTPSink(UsageEnvironment& env,
                                           Groupsock* RTPgs,

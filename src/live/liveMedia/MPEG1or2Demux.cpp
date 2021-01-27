@@ -19,9 +19,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MPEG1or2Demux.hh"
+
+#include <stdlib.h>
+
 #include "MPEG1or2DemuxedElementaryStream.hh"
 #include "StreamParser.hh"
-#include <stdlib.h>
 
 ////////// MPEGProgramStreamParser definition //////////
 

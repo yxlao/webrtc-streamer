@@ -12,10 +12,12 @@
 #pragma once
 
 #include <live555helper/environment.h>
+
+#include <map>
+#include <string>
+
 #include "SessionSink.h"
 #include "liveMedia.hh"
-#include <string>
-#include <map>
 
 #define RTSP_CALLBACK(uri, resultCode, resultString)                       \
     static void continueAfter##uri(RTSPClient* rtspClient, int resultCode, \

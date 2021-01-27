@@ -8,11 +8,12 @@
 #define CIVETSERVER_HEADER_INCLUDED
 #ifdef __cplusplus
 
-#include "civetweb.h"
 #include <map>
 #include <stdexcept>
 #include <string>
 #include <vector>
+
+#include "civetweb.h"
 
 #ifndef CIVETWEB_CXX_API
 #if defined(_WIN32)

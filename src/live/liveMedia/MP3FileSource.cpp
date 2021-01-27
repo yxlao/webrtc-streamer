@@ -19,8 +19,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MP3FileSource.hh"
-#include "MP3StreamState.hh"
+
 #include "InputFile.hh"
+#include "MP3StreamState.hh"
 
 ////////// MP3FileSource //////////
 

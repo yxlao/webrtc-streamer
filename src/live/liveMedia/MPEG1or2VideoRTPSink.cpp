@@ -19,6 +19,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MPEG1or2VideoRTPSink.hh"
+
 #include "MPEG1or2VideoStreamFramer.hh"
 
 MPEG1or2VideoRTPSink::MPEG1or2VideoRTPSink(UsageEnvironment& env,

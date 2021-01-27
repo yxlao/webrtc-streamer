@@ -20,6 +20,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // calling toupper()/tolower() on human-input strings. Implementation
 
 #include "Locale.hh"
+
 #include <strDup.hh>
 
 Locale::Locale(char const* newLocale, LocaleCategory category) {

@@ -7,8 +7,9 @@
 #include "CivetServer.h"
 
 #include <assert.h>
-#include <stdexcept>
 #include <string.h>
+
+#include <stdexcept>
 
 #ifndef UNUSED_PARAMETER
 #define UNUSED_PARAMETER(x) (void)(x)

@@ -19,6 +19,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // packet Implementation
 
 #include "BasicUDPSink.hh"
+
 #include <GroupsockHelper.hh>
 
 BasicUDPSink* BasicUDPSink::createNew(UsageEnvironment& env,

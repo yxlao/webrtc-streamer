@@ -18,9 +18,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // A parser for a MPEG Transport Stream
 // Implementation
 
-#include "MPEG2TransportStreamParser.hh"
-#include "FileSink.hh"
 #include <time.h>  // for time_t
+
+#include "FileSink.hh"
+#include "MPEG2TransportStreamParser.hh"
 
 Boolean MPEG2TransportStreamParser ::processStreamPacket(
         PIDState_STREAM* pidState, Boolean pusi, unsigned numDataBytes) {

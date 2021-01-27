@@ -18,12 +18,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // A class that encapsulates an Ogg file.
 // Implementation
 
-#include "OggFileParser.hh"
-#include "OggDemuxedTrack.hh"
 #include "ByteStreamFileSource.hh"
-#include "VorbisAudioRTPSink.hh"
+#include "OggDemuxedTrack.hh"
+#include "OggFileParser.hh"
 #include "SimpleRTPSink.hh"
 #include "TheoraVideoRTPSink.hh"
+#include "VorbisAudioRTPSink.hh"
 
 ////////// OggTrackTable definition /////////
 

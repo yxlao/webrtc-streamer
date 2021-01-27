@@ -19,9 +19,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MPEG1or2AudioStreamFramer.hh"
-#include "StreamParser.hh"
-#include "MP3Internals.hh"
+
 #include <GroupsockHelper.hh>
+
+#include "MP3Internals.hh"
+#include "StreamParser.hh"
 
 ////////// MPEG1or2AudioStreamParser definition //////////
 

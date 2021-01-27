@@ -19,6 +19,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MP3ADURTPSource.hh"
+
 #include "MP3ADUdescriptor.hh"
 
 ////////// ADUBufferedPacket and ADUBufferedPacketFactory //////////

@@ -20,9 +20,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "AC3AudioFileServerMediaSubsession.hh"
-#include "ByteStreamFileSource.hh"
-#include "AC3AudioStreamFramer.hh"
+
 #include "AC3AudioRTPSink.hh"
+#include "AC3AudioStreamFramer.hh"
+#include "ByteStreamFileSource.hh"
 
 AC3AudioFileServerMediaSubsession* AC3AudioFileServerMediaSubsession::createNew(
         UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource) {

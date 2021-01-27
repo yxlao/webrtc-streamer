@@ -20,10 +20,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 //
 
 #include "H263plusVideoStreamFramer.hh"
-#include "H263plusVideoStreamParser.hh"
 
 #include <string.h>
+
 #include <GroupsockHelper.hh>
+
+#include "H263plusVideoStreamParser.hh"
 
 ///////////////////////////////////////////////////////////////////////////////
 ////////// H263plusVideoStreamFramer implementation //////////

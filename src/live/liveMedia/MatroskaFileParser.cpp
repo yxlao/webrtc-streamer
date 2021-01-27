@@ -19,9 +19,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MatroskaFileParser.hh"
-#include "MatroskaDemuxedTrack.hh"
+
 #include <ByteStreamFileSource.hh>
 #include <GroupsockHelper.hh>  // for "gettimeofday()
+
+#include "MatroskaDemuxedTrack.hh"
 
 MatroskaFileParser::MatroskaFileParser(MatroskaFile& ourFile,
                                        FramedSource* inputSource,

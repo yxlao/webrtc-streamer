@@ -18,12 +18,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // MP3 internal implementation details
 // Implementation
 
-#include "MP3InternalsHuffman.hh"
-
-#include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+#include "MP3InternalsHuffman.hh"
 
 // This is crufty old code that needs to be cleaned up #####
 

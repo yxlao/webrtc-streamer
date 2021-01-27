@@ -20,8 +20,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "AMRAudioFileServerMediaSubsession.hh"
-#include "AMRAudioRTPSink.hh"
+
 #include "AMRAudioFileSource.hh"
+#include "AMRAudioRTPSink.hh"
 
 AMRAudioFileServerMediaSubsession* AMRAudioFileServerMediaSubsession::createNew(
         UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource) {

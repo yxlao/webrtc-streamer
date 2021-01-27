@@ -21,8 +21,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "HLSSegmenter.hh"
-#include "OutputFile.hh"
+
 #include "MPEG2TransportStreamMultiplexor.hh"
+#include "OutputFile.hh"
 
 #define TRANSPORT_PACKET_SIZE 188
 #define OUTPUT_FILE_BUFFER_SIZE (TRANSPORT_PACKET_SIZE * 100)

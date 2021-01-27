@@ -19,6 +19,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "RTPSink.hh"
+
 #include "GroupsockHelper.hh"
 
 ////////// RTPSink //////////

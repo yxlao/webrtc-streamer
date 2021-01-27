@@ -19,10 +19,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "AMRAudioRTPSource.hh"
-#include "MultiFramedRTPSource.hh"
-#include "BitVector.hh"
-#include <string.h>
+
 #include <stdlib.h>
+#include <string.h>
+
+#include "BitVector.hh"
+#include "MultiFramedRTPSource.hh"
 
 // This source is implemented internally by two separate sources:
 // (i) a RTP source for the raw (and possibly interleaved) AMR frames, and

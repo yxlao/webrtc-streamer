@@ -223,7 +223,6 @@ function(set_global_target_properties target)
         endif()
     endif()
 
-    # TODO: Fix warnings.
     target_compile_options(${target} PRIVATE
         $<$<COMPILE_LANGUAGE:C>:$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX ${DISABLE_MSVC_WARNINGS}>>
         $<$<COMPILE_LANGUAGE:C>:$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang,Intel>:-Wall -Werror>>

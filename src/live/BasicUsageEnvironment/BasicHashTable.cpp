@@ -18,14 +18,15 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "BasicHashTable.hh"
+
 #include "strDup.hh"
 
 #if defined(__WIN32__) || defined(_WIN32)
 #else
 #include <stddef.h>
 #endif
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 // When there are this many entries per bucket, on average, rebuild
 // the table to increase the number of buckets

@@ -19,10 +19,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "OggFileSink.hh"
+
+#include "FramedSource.hh"
+#include "MPEG2TransportStreamMultiplexor.hh"  // for calculateCRC()
 #include "OutputFile.hh"
 #include "VorbisAudioRTPSource.hh"  // for "parseVorbisOrTheoraConfigStr()"
-#include "MPEG2TransportStreamMultiplexor.hh"  // for calculateCRC()
-#include "FramedSource.hh"
 
 OggFileSink* OggFileSink ::createNew(UsageEnvironment& env,
                                      char const* fileName,

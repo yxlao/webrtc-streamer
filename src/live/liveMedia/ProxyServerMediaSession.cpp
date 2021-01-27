@@ -19,9 +19,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // RTSP servers that acts as a 'proxy' for another (unicast or multicast)
 // RTSP/RTP stream. Implementation
 
-#include "liveMedia.hh"
-#include "RTSPCommon.hh"
 #include "GroupsockHelper.hh"  // for "our_random()"
+#include "RTSPCommon.hh"
+#include "liveMedia.hh"
 
 #ifndef MILLION
 #define MILLION 1000000

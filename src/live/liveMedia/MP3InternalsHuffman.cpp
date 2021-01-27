@@ -19,9 +19,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MP3InternalsHuffman.hh"
+
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 MP3HuffmanEncodingInfo ::MP3HuffmanEncodingInfo(Boolean includeDecodedValues) {
     if (includeDecodedValues) {

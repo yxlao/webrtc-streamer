@@ -21,10 +21,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MP3AudioFileServerMediaSubsession.hh"
-#include "MPEG1or2AudioRTPSink.hh"
+
+#include "MP3ADU.hh"
 #include "MP3ADURTPSink.hh"
 #include "MP3FileSource.hh"
-#include "MP3ADU.hh"
+#include "MPEG1or2AudioRTPSink.hh"
 
 MP3AudioFileServerMediaSubsession*
 MP3AudioFileServerMediaSubsession ::createNew(UsageEnvironment& env,

@@ -19,9 +19,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MP3ADUinterleaving.hh"
-#include "MP3ADUdescriptor.hh"
 
 #include <string.h>
+
+#include "MP3ADUdescriptor.hh"
 
 #ifdef TEST_LOSS
 #include "GroupsockHelper.hh"

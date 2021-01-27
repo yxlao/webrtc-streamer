@@ -19,9 +19,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "TheoraVideoRTPSink.hh"
+
 #include "Base64.hh"
-#include "VorbisAudioRTPSource.hh"  // for parseVorbisOrTheoraConfigStr()
 #include "VorbisAudioRTPSink.hh"    // for generateVorbisOrTheoraConfigStr()
+#include "VorbisAudioRTPSource.hh"  // for parseVorbisOrTheoraConfigStr()
 
 TheoraVideoRTPSink* TheoraVideoRTPSink ::createNew(
         UsageEnvironment& env,

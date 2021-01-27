@@ -25,8 +25,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 extern "C" int initializeWinsockIfNecessary();
 #else
 #include <stdarg.h>
-#include <time.h>
 #include <sys/time.h>
+#include <time.h>
 #if !defined(_WIN32)
 #include <netinet/tcp.h>
 #ifdef __ANDROID_NDK__

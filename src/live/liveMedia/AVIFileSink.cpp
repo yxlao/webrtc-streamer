@@ -19,9 +19,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "AVIFileSink.hh"
+
+#include "GroupsockHelper.hh"
 #include "InputFile.hh"
 #include "OutputFile.hh"
-#include "GroupsockHelper.hh"
 
 #define fourChar(x, y, z, w) \
     (((w) << 24) | ((z) << 16) | ((y) << 8) | (x)) /*little-endian*/

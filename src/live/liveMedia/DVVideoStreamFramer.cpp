@@ -20,6 +20,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // including a prototype implementation.)
 
 #include "DVVideoStreamFramer.hh"
+
 #include "GroupsockHelper.hh"
 
 ////////// DVVideoStreamFramer implementation //////////

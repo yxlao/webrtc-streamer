@@ -21,6 +21,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "SimpleRTPSource.hh"
+
 #include <string.h>
 
 SimpleRTPSource* SimpleRTPSource::createNew(UsageEnvironment& env,

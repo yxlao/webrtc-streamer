@@ -178,20 +178,17 @@ mg_static_assert(sizeof(void *) >= sizeof(int), "data type size check");
 #endif /* __SYMBIAN32__ */
 
 #if defined(__ZEPHYR__)
-#include <time.h>
-
 #include <ctype.h>
+#include <fcntl.h>
+#include <libc_extensions.h>
 #include <net/socket.h>
 #include <posix/pthread.h>
 #include <posix/time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <zephyr.h>
-
-#include <fcntl.h>
-
-#include <libc_extensions.h>
 
 /* Max worker threads is the max of pthreads minus the main application thread
  * and minus the main civetweb thread, thus -2

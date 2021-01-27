@@ -19,10 +19,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "RTSPClient.hh"
-#include "RTSPCommon.hh"
+
+#include <GroupsockHelper.hh>
+
 #include "Base64.hh"
 #include "Locale.hh"
-#include <GroupsockHelper.hh>
+#include "RTSPCommon.hh"
 #include "ourMD5.hh"
 
 ////////// RTSPClient implementation //////////

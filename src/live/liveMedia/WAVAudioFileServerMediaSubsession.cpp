@@ -20,9 +20,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "WAVAudioFileServerMediaSubsession.hh"
+
+#include "SimpleRTPSink.hh"
 #include "WAVAudioFileSource.hh"
 #include "uLawAudioFilter.hh"
-#include "SimpleRTPSink.hh"
 
 WAVAudioFileServerMediaSubsession*
 WAVAudioFileServerMediaSubsession ::createNew(UsageEnvironment& env,

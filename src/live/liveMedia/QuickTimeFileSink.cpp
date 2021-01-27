@@ -19,16 +19,17 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "QuickTimeFileSink.hh"
-#include "QuickTimeGenericRTPSource.hh"
-#include "GroupsockHelper.hh"
-#include "InputFile.hh"
-#include "OutputFile.hh"
-#include "H263plusVideoRTPSource.hh"  // for the special header
-#include "MPEG4GenericRTPSource.hh"  //for "samplingFrequencyFromAudioSpecificConfig()"
-#include "MPEG4LATMAudioRTPSource.hh"  // for "parseGeneralConfigStr()"
-#include "Base64.hh"
 
 #include <ctype.h>
+
+#include "Base64.hh"
+#include "GroupsockHelper.hh"
+#include "H263plusVideoRTPSource.hh"  // for the special header
+#include "InputFile.hh"
+#include "MPEG4GenericRTPSource.hh"  //for "samplingFrequencyFromAudioSpecificConfig()"
+#include "MPEG4LATMAudioRTPSource.hh"  // for "parseGeneralConfigStr()"
+#include "OutputFile.hh"
+#include "QuickTimeGenericRTPSource.hh"
 
 #define fourChar(x, y, z, w) (((x) << 24) | ((y) << 16) | ((z) << 8) | (w))
 

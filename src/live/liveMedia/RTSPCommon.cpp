@@ -19,11 +19,13 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "RTSPCommon.hh"
-#include "Locale.hh"
-#include <string.h>
-#include <stdio.h>
+
 #include <ctype.h>  // for "isxdigit()
-#include <time.h>   // for "strftime()" and "gmtime()"
+#include <stdio.h>
+#include <string.h>
+#include <time.h>  // for "strftime()" and "gmtime()"
+
+#include "Locale.hh"
 
 static void decodeURL(char* url) {
     // Replace (in place) any %<hex><hex> sequences with the appropriate 8-bit

@@ -19,6 +19,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "VorbisAudioRTPSink.hh"
+
 #include "Base64.hh"
 #include "VorbisAudioRTPSource.hh"  // for parseVorbisOrTheoraConfigStr()
 

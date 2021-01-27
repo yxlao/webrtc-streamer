@@ -19,6 +19,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "T140TextRTPSink.hh"
+
 #include <GroupsockHelper.hh>  // for "gettimeofday()"
 
 ////////// T140TextRTPSink implementation //////////

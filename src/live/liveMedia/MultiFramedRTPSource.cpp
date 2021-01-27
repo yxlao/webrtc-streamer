@@ -20,9 +20,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MultiFramedRTPSource.hh"
-#include "RTCP.hh"
-#include "GroupsockHelper.hh"
+
 #include <string.h>
+
+#include "GroupsockHelper.hh"
+#include "RTCP.hh"
 
 ////////// ReorderingPacketBuffer definition //////////
 

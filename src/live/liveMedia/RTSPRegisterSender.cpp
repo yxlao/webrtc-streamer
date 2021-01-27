@@ -19,6 +19,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // "DEREGISTER") command to a specified client. Implementation
 
 #include "RTSPRegisterSender.hh"
+
 #include <GroupsockHelper.hh>  // for MAKE_SOCKADDR_IN
 
 ////////// RTSPRegisterOrDeregisterSender implementation /////////

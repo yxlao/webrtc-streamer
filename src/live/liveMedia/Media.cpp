@@ -19,6 +19,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "Media.hh"
+
 #include "HashTable.hh"
 
 ////////// Medium //////////

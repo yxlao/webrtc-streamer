@@ -22,6 +22,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // I-frames) on the video stream. Implementation
 
 #include "MPEG2TransportStreamTrickModeFilter.hh"
+
 #include <ByteStreamFileSource.hh>
 
 // Define the following to be True if we want the output file to have the same

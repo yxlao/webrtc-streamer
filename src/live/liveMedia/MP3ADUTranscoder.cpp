@@ -19,8 +19,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MP3ADUTranscoder.hh"
-#include "MP3Internals.hh"
+
 #include <string.h>
+
+#include "MP3Internals.hh"
 
 MP3ADUTranscoder::MP3ADUTranscoder(UsageEnvironment& env,
                                    unsigned outBitrate /* in kbps */,

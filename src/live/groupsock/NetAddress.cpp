@@ -19,10 +19,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "NetAddress.hh"
-#include "GroupsockHelper.hh"
 
 #include <stddef.h>
 #include <stdio.h>
+
+#include "GroupsockHelper.hh"
 #if defined(__WIN32__) || defined(_WIN32)
 #define USE_GETHOSTBYNAME \
     1 /*because at least some Windows don't have getaddrinfo()*/

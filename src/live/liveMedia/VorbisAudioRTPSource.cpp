@@ -19,6 +19,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "VorbisAudioRTPSource.hh"
+
 #include "Base64.hh"
 
 ////////// VorbisBufferedPacket and VorbisBufferedPacketFactory //////////

@@ -20,8 +20,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MPEG1or2VideoStreamFramer.hh"
-#include "MPEGVideoStreamParser.hh"
+
 #include <string.h>
+
+#include "MPEGVideoStreamParser.hh"
 
 ////////// MPEG1or2VideoStreamParser definition //////////
 

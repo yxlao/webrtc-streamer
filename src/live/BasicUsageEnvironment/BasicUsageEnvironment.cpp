@@ -18,6 +18,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "BasicUsageEnvironment.hh"
+
 #include <stdio.h>
 
 ////////// BasicUsageEnvironment //////////

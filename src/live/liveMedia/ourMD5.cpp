@@ -19,6 +19,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // systems, we have our own implementation. Implementation
 
 #include "ourMD5.hh"
+
 #include <NetCommon.h>  // for u_int32_t, u_int64_t
 #include <string.h>
 

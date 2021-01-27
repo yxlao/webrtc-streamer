@@ -9,9 +9,9 @@
 **
 ** -------------------------------------------------------------------------*/
 
-#include <sstream>
-
 #include <live555helper/mkvclient.h>
+
+#include <sstream>
 
 void MKVClient::onMatroskaFileCreation(MatroskaFile* newFile) {
     m_mkvfile = newFile;

@@ -12,11 +12,13 @@
 #pragma once
 
 #include <live555helper/environment.h>
-#include "SessionSink.h"
-#include "liveMedia.hh"
-#include <string>
+
 #include <map>
 #include <sstream>
+#include <string>
+
+#include "SessionSink.h"
+#include "liveMedia.hh"
 
 /* ---------------------------------------------------------------------------
 **  SDP client connection interface

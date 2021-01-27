@@ -19,8 +19,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 //   headers and frames
 // Implementation
 
-#include "MPEGVideoStreamParser.hh"
 #include <GroupsockHelper.hh>
+
+#include "MPEGVideoStreamParser.hh"
 
 ////////// TimeCode implementation //////////
 

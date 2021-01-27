@@ -19,8 +19,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "AMRAudioFileSource.hh"
-#include "InputFile.hh"
+
 #include "GroupsockHelper.hh"
+#include "InputFile.hh"
 
 ////////// AMRAudioFileSource //////////
 

@@ -20,8 +20,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #include "StreamParser.hh"
 
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define BANK_SIZE 150000
 

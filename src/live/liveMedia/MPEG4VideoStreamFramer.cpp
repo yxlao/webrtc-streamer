@@ -24,9 +24,11 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "MPEG4VideoStreamFramer.hh"
-#include "MPEGVideoStreamParser.hh"
-#include "MPEG4LATMAudioRTPSource.hh"  // for "parseGeneralConfigStr()"
+
 #include <string.h>
+
+#include "MPEG4LATMAudioRTPSource.hh"  // for "parseGeneralConfigStr()"
+#include "MPEGVideoStreamParser.hh"
 
 ////////// MPEG4VideoStreamParser definition //////////
 

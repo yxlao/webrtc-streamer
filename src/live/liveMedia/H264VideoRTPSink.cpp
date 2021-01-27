@@ -19,9 +19,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 // Implementation
 
 #include "H264VideoRTPSink.hh"
-#include "H264VideoStreamFramer.hh"
+
 #include "Base64.hh"
 #include "H264VideoRTPSource.hh"  // for "parseSPropParameterSets()"
+#include "H264VideoStreamFramer.hh"
 
 ////////// H264VideoRTPSink implementation //////////
 

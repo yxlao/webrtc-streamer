@@ -12,10 +12,12 @@
 #pragma once
 
 #include <live555helper/environment.h>
+
+#include <map>
+#include <string>
+
 #include "SessionSink.h"
 #include "liveMedia.hh"
-#include <string>
-#include <map>
 
 /* ---------------------------------------------------------------------------
 **  MKV client connection interface

@@ -180,7 +180,7 @@ function(set_global_target_properties target)
         WEBRTC_POSIX
     )
     target_compile_options(${target} PRIVATE
-        "-fno-rtti"
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
     )
 
     # X11

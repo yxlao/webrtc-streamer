@@ -9,8 +9,7 @@
 
 #include "HttpServerRequestHandler.h"
 
-#include <string.h>
-
+#include <cstring>
 #include <iostream>
 
 int log_message(const struct mg_connection *conn, const char *message) {

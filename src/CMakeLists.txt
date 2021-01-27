@@ -1,43 +1,3 @@
-function(set_global_target_properties target)
-    add_dependencies(${target} ext_webrtc_all)
-    target_link_directories(${target} PRIVATE
-        ${WEBRTC_LIB_DIR}
-    )
-    target_link_libraries(${target} PRIVATE
-        ${WEBRTC_LIBRARIES}
-        Threads::Threads
-        dl
-        X11         # optional: X11 (desktop capture)
-        Xext        # optional: X11 (desktop capture)
-        Xdamage     # optional: X11 (desktop capture)
-        Xfixes      # optional: X11 (desktop capture)
-        Xcomposite  # optional: X11 (desktop capture)
-        Xrandr      # optional: X11 (desktop capture)
-        Xtst        # optional: X11 (desktop capture)
-    )
-    target_compile_definitions(${target} PRIVATE
-        WEBRTC_POSIX
-        USE_X11     # optional: X11 (desktop capture)
-    )
-    target_compile_options(${target} PRIVATE
-        $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
-    )
-
-    # X11
-    set_target_properties(${target}
-        PROPERTIES
-        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
-    )
-    target_compile_options(${target} PRIVATE
-        $<$<COMPILE_LANGUAGE:C>:$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX ${DISABLE_MSVC_WARNINGS}>>
-        $<$<COMPILE_LANGUAGE:C>:$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang,Intel>:-Wall -Werror>>
-        $<$<COMPILE_LANGUAGE:CXX>:$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX ${DISABLE_MSVC_WARNINGS}>>
-        $<$<COMPILE_LANGUAGE:CXX>:$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang,Intel>:-Wall -Werror>>
-    )
-endfunction()
-
 file(GLOB WEBRTC_STREAMER_SRC *.cpp)
 file(GLOB LIVE_SRC
     live/groupsock/*.c*
@@ -53,7 +13,24 @@ add_executable(webrtc-streamer
     ${WEBRTC_STREAMER_SRC}
     ${LIVE_SRC}                        # optional: live
 )
-set_global_target_properties(webrtc-streamer)
+add_dependencies(webrtc-streamer
+    ext_webrtc_all
+)
+target_link_directories(webrtc-streamer PRIVATE
+    ${WEBRTC_LIB_DIR}
+)
+target_link_libraries(webrtc-streamer PRIVATE
+    ${WEBRTC_LIBRARIES}
+    Threads::Threads
+    dl
+    X11                                # optional: X11 (desktop capture)
+    Xext                               # optional: X11 (desktop capture)
+    Xdamage                            # optional: X11 (desktop capture)
+    Xfixes                             # optional: X11 (desktop capture)
+    Xcomposite                         # optional: X11 (desktop capture)
+    Xrandr                             # optional: X11 (desktop capture)
+    Xtst                               # optional: X11 (desktop capture)
+)
 target_include_directories(webrtc-streamer SYSTEM PRIVATE
     ${WEBRTC_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -64,12 +41,29 @@ target_include_directories(webrtc-streamer SYSTEM PRIVATE
     civetweb                           # optional: civetweb
 )
 target_compile_definitions(webrtc-streamer PRIVATE
-    OPENSSL_API_1_1      # optional: civetweb
-    HAVE_LIVE555         # optional: live555helper
-    NO_OPENSSL=1         # optional: live555helper
-    SOCKLEN_T=socklen_t  # optional: live
-    _FILE_OFFSET_BITS=64 # optional: civetweb
-    _LARGEFILE_SOURCE=1  # optional: civetweb
+    WEBRTC_POSIX
+    USE_X11                            # optional: X11 (desktop capture)
+    OPENSSL_API_1_1                    # optional: civetweb
+    HAVE_LIVE555                       # optional: live555helper
+    NO_OPENSSL=1                       # optional: live555helper
+    SOCKLEN_T=socklen_t                # optional: live
+    _FILE_OFFSET_BITS=64               # optional: civetweb
+    _LARGEFILE_SOURCE=1                # optional: civetweb
+)
+target_compile_options(webrtc-streamer PRIVATE
+    $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
+)
+set_target_properties(webrtc-streamer
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
+)
+target_compile_options(webrtc-streamer PRIVATE
+    $<$<COMPILE_LANGUAGE:C>:$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX ${DISABLE_MSVC_WARNINGS}>>
+    $<$<COMPILE_LANGUAGE:C>:$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang,Intel>:-Wall -Werror>>
+    $<$<COMPILE_LANGUAGE:CXX>:$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX ${DISABLE_MSVC_WARNINGS}>>
+    $<$<COMPILE_LANGUAGE:CXX>:$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang,Intel>:-Wall -Werror>>
 )
 
 add_custom_target(copy-html-dir

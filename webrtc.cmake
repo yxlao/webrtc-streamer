@@ -95,13 +95,13 @@ ExternalProject_Add_Step(ext_webrtc build_obj
     DEPENDERS install
 )
 
-# Is "/" is critical?
+# TODO: check if the trailing "/" is is needed.
 set(WEBRTC_INCLUDE_DIR
-    ${WEBRTC_ROOT}/src
-    ${WEBRTC_ROOT}/src/third_party/abseil-cpp
-    ${WEBRTC_ROOT}/src/third_party/jsoncpp/source/include
-    ${WEBRTC_ROOT}/src/third_party/jsoncpp/generated
-    ${WEBRTC_ROOT}/src/third_party/libyuv/include
+    ${WEBRTC_ROOT}/src/
+    ${WEBRTC_ROOT}/src/third_party/abseil-cpp/
+    ${WEBRTC_ROOT}/src/third_party/jsoncpp/source/include/
+    ${WEBRTC_ROOT}/src/third_party/jsoncpp/generated/
+    ${WEBRTC_ROOT}/src/third_party/libyuv/include/
 )
 set(WEBRTC_LIB_DIR ${WEBRTC_ROOT}/src/out/${WEBRTC_BUILD}/obj)
 set(WEBRTC_LIBRARIES

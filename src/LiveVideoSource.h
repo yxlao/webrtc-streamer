@@ -18,19 +18,16 @@
 
 #include "environment.h"
 
-#include "libyuv/video_common.h"
-#include "libyuv/convert.h"
-
-#include "media/base/codec.h"
-#include "media/base/video_common.h"
-#include "media/base/video_broadcaster.h"
-#include "media/engine/internal_decoder_factory.h"
-
-#include "common_video/h264/h264_common.h"
-#include "common_video/h264/sps_parser.h"
-#include "modules/video_coding/h264_sprop_parameter_sets.h"
-
-#include "api/video_codecs/video_decoder.h"
+#include <libyuv/video_common.h>
+#include <libyuv/convert.h>
+#include <media/base/codec.h>
+#include <media/base/video_common.h>
+#include <media/base/video_broadcaster.h>
+#include <media/engine/internal_decoder_factory.h>
+#include <common_video/h264/h264_common.h>
+#include <common_video/h264/sps_parser.h>
+#include <modules/video_coding/h264_sprop_parameter_sets.h>
+#include <api/video_codecs/video_decoder.h>
 
 #include "VideoDecoder.h"
 

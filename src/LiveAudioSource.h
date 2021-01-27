@@ -17,8 +17,8 @@
 
 #include "environment.h"
 
-#include "pc/local_audio_source.h"
-#include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include <pc/local_audio_source.h>
+#include <api/audio_codecs/builtin_audio_decoder_factory.h>
 
 template <typename T>
 class LiveAudioSource : public webrtc::Notifier<webrtc::AudioSourceInterface>,

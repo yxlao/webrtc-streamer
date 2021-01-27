@@ -12,9 +12,9 @@
 #include <string.h>
 #include <vector>
 
-#include "api/video/i420_buffer.h"
-#include "modules/video_coding/include/video_error_codes.h"
-#include "modules/video_coding/h264_sprop_parameter_sets.h"
+#include <api/video/i420_buffer.h>
+#include <modules/video_coding/include/video_error_codes.h>
+#include <modules/video_coding/h264_sprop_parameter_sets.h>
 
 class VideoDecoder : public webrtc::DecodedImageCallback {
 private:

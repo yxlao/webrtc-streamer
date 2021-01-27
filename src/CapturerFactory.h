@@ -37,7 +37,7 @@
 #include "WindowCapturer.h"
 #endif
 
-#include "pc/video_track_source.h"
+#include <pc/video_track_source.h>
 
 template <class T>
 class TrackSource : public webrtc::VideoTrackSource {

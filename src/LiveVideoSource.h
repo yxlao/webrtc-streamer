@@ -128,8 +128,8 @@ public:
                     res = -1;
                 } else {
                     if (m_decoder.hasDecoder()) {
-                        if ((m_format.width != sps->width) ||
-                            (m_format.height != sps->height)) {
+                        if ((m_format.width != (int)sps->width) ||
+                            (m_format.height != (int)sps->height)) {
                             RTC_LOG(INFO)
                                     << "format changed => set format from "
                                     << m_format.width << "x" << m_format.height

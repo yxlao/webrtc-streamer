@@ -26,7 +26,8 @@ EBMLNumber::EBMLNumber(Boolean stripLeading1)
 EBMLNumber::~EBMLNumber() {}
 
 char* EBMLNumber::hexString() const {
-    static char printBuf[2 * EBML_NUMBER_MAX_LEN + 1];
+    // Originally +1, now +5 to suppress warnings.
+    static char printBuf[2 * EBML_NUMBER_MAX_LEN + 5];
 
     char* to = printBuf;
     for (unsigned i = 0; i < len; ++i) {

@@ -154,7 +154,7 @@ public:
                                          "Audio failed";
                 }
                 delete[] decoded;
-                while (m_buffer.size() > segmentLength * m_channel) {
+                while ((int)m_buffer.size() > segmentLength * m_channel) {
                     int16_t *outbuffer = new int16_t[segmentLength * m_channel];
                     for (int i = 0; i < segmentLength * m_channel; ++i) {
                         uint16_t value = m_buffer.front();

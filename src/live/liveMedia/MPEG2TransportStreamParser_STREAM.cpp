@@ -285,7 +285,7 @@ unsigned MPEG2TransportStreamParser ::parsePESHeader(PIDState_STREAM* pidState,
             // Make sure that the number of header bytes parsed is consistent
             // with "PES_header_data_length" (and skip over any remasining
             // 'stuffing' bytes):
-            if (curOffset() - startPos > 9 + PES_header_data_length) {
+            if ((int)(curOffset() - startPos) > 9 + PES_header_data_length) {
 #ifdef DEBUG_ERRORS
                 fprintf(stderr,
                         "MPEG2TransportStreamParser::parsePESHeader(0x%02x, "

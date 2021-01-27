@@ -44,7 +44,7 @@ public:
         ssize_t markerSize = 0;
         if ((strcmp(mime, "video/H264") == 0) ||
             (strcmp(mime, "video/H265") == 0)) {
-            if (size > sizeof(H26X_marker)) {
+            if ((unsigned long)size > sizeof(H26X_marker)) {
                 memcpy(buffer, H26X_marker, sizeof(H26X_marker));
                 markerSize = sizeof(H26X_marker);
             }

@@ -26,7 +26,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 Locale::Locale(char const* newLocale, LocaleCategory category) {
 #ifndef LOCALE_NOT_USED
 #ifndef NEWLOCALE_NOT_USED
-    int categoryMask;
+    int categoryMask = 0;
     switch (category) {
         case All: {
             categoryMask = LC_ALL_MASK;

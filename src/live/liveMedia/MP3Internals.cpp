@@ -746,7 +746,7 @@ unsigned TranscodeMP3ADU(unsigned char const* fromPtr,
                          unsigned toMaxSize,
                          unsigned& availableBytesForBackpointer) {
     // Begin by parsing the input ADU's parameters:
-    unsigned hdr, inFrameSize, inSideInfoSize, backpointer, inAduSize;
+    unsigned hdr = 0, inFrameSize, inSideInfoSize, backpointer, inAduSize;
     MP3SideInfo sideInfo;
     if (!GetADUInfoFromMP3Frame(fromPtr, fromSize, hdr, inFrameSize, sideInfo,
                                 inSideInfoSize, backpointer, inAduSize)) {

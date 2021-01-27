@@ -1,3 +1,8 @@
+add_custom_target(copy_html_dir
+    COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_BINARY_DIR}/html
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/html ${CMAKE_BINARY_DIR}/html
+)
+
 file(GLOB WEBRTC_STREAMER_SRC *.cpp)
 file(GLOB LIVE_SRC
     live/groupsock/*.c*
@@ -15,6 +20,7 @@ add_executable(webrtc-streamer
 )
 add_dependencies(webrtc-streamer
     ext_webrtc_all
+    copy_html_dir
 )
 target_link_directories(webrtc-streamer PRIVATE
     ${WEBRTC_LIB_DIR}
@@ -65,9 +71,3 @@ target_compile_options(webrtc-streamer PRIVATE
     $<$<COMPILE_LANGUAGE:CXX>:$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX ${DISABLE_MSVC_WARNINGS}>>
     $<$<COMPILE_LANGUAGE:CXX>:$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang,Intel>:-Wall -Werror>>
 )
-
-add_custom_target(copy-html-dir
-    COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_BINARY_DIR}/html
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/html ${CMAKE_BINARY_DIR}/html
-)
-add_dependencies(webrtc-streamer copy-html-dir)

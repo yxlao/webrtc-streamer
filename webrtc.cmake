@@ -101,8 +101,8 @@ set(WEBRTC_INCLUDE_DIR
 set(WEBRTC_LIB_DIR ${WEBRTCROOT}/src/out/${WEBRTCBUILD}/obj)
 set(WEBRTC_LIBRARIES ${CMAKE_STATIC_LIBRARY_PREFIX}webrtc${CMAKE_STATIC_LIBRARY_SUFFIX})
 
-add_library(extra_webrtc_objs STATIC ${EXTRA_WEBRTC_OBJS})
+add_library(webrtc_extra STATIC ${EXTRA_WEBRTC_OBJS})
 set_source_files_properties(${EXTRA_WEBRTC_OBJS} PROPERTIES GENERATED TRUE)
-add_dependencies(extra_webrtc_objs ext_webrtc)
-set_target_properties(extra_webrtc_objs PROPERTIES LINKER_LANGUAGE CXX)
+add_dependencies(webrtc_extra ext_webrtc)
+set_target_properties(webrtc_extra PROPERTIES LINKER_LANGUAGE CXX)
 

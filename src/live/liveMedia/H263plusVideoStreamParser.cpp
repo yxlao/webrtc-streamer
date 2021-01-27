@@ -197,9 +197,9 @@ int H263plusVideoStreamParser::parseH263Frame( )
             ((row = fStates[(unsigned char)row][*(bufferIndex++)]) != -1)); // Start code was not found
 
    if (row != -1) {
-      fprintf(stderr, "%s: Buffer too small (%u)\n",
-         "h263reader:", bufferEnd - fTo + ADDITIONAL_BYTES_NEEDED);
-      return 0;
+       fprintf(stderr, "%s: Buffer too small (%ld)\n",
+               "h263reader:", bufferEnd - fTo + ADDITIONAL_BYTES_NEEDED);
+       return 0;
    }
 
    // Cool ... now we have a start code

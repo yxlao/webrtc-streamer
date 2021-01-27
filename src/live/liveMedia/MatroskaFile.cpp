@@ -215,7 +215,7 @@ void MatroskaFile::handleEndOfTrackHeaderParsing() {
 
     delete[] trackChoice;
   }
-  
+
 #ifdef DEBUG
   if (fChosenVideoTrackNumber > 0) fprintf(stderr, "Chosen video track: #%d\n", fChosenVideoTrackNumber); else fprintf(stderr, "No chosen video track\n");
   if (fChosenAudioTrackNumber > 0) fprintf(stderr, "Chosen audio track: #%d\n", fChosenAudioTrackNumber); else fprintf(stderr, "No chosen audio track\n");
@@ -267,12 +267,12 @@ void MatroskaFile::getH264ConfigData(MatroskaTrack const* track,
     unsigned i;
     u_int8_t* ptr = SPSandPPSBytes;
     u_int8_t* limit = &SPSandPPSBytes[numSPSandPPSBytes];
-	
+
     unsigned numSPSs = (*ptr++)&0x1F; CHECK_PTR;
     for (i = 0; i < numSPSs; ++i) {
       unsigned spsSize1 = (*ptr++)<<8; CHECK_PTR;
       spsSize1 |= *ptr++; CHECK_PTR;
-	  
+
       if (spsSize1 > NUM_BYTES_REMAINING) break;
       u_int8_t nal_unit_type = ptr[0]&0x1F;
       if (sps == NULL && nal_unit_type == 7/*sanity check*/) { // save the first one
@@ -282,12 +282,12 @@ void MatroskaFile::getH264ConfigData(MatroskaTrack const* track,
       }
       ptr += spsSize1;
     }
-	
+
     unsigned numPPSs = (*ptr++)&0x1F; CHECK_PTR;
     for (i = 0; i < numPPSs; ++i) {
       unsigned ppsSize1 = (*ptr++)<<8; CHECK_PTR;
       ppsSize1 |= *ptr++; CHECK_PTR;
-	  
+
       if (ppsSize1 > NUM_BYTES_REMAINING) break;
       u_int8_t nal_unit_type = ptr[0]&0x1F;
       if (pps == NULL && nal_unit_type == 8/*sanity check*/) { // save the first one
@@ -335,12 +335,12 @@ void MatroskaFile::getH265ConfigData(MatroskaTrack const* track,
       }
     }
     if (VPS_SPS_PPSBytes == NULL) break; // no VPS,SPS,PPS NAL unit information was present
-	
+
     // Extract, from "VPS_SPS_PPSBytes", one VPS NAL unit, one SPS NAL unit, and one PPS NAL unit.
     // (I hope one is all we need of each.)
     u_int8_t* ptr = VPS_SPS_PPSBytes;
     u_int8_t* limit = &VPS_SPS_PPSBytes[numVPS_SPS_PPSBytes];
-	
+
     if (track->codecPrivateUsesH264FormatForH265) {
       // The data uses the H.264-style format (but including VPS NAL unit(s)).
       while (NUM_BYTES_REMAINING > 0) {
@@ -348,7 +348,7 @@ void MatroskaFile::getH265ConfigData(MatroskaTrack const* track,
 	for (i = 0; i < numNALUnits; ++i) {
 	  unsigned nalUnitLength = (*ptr++)<<8; CHECK_PTR;
 	  nalUnitLength |= *ptr++; CHECK_PTR;
-	      
+
 	  if (nalUnitLength > NUM_BYTES_REMAINING) break;
 	  u_int8_t nal_unit_type = (ptr[0]&0x7E)>>1;
 	  if (nal_unit_type == 32) { // VPS
@@ -372,14 +372,14 @@ void MatroskaFile::getH265ConfigData(MatroskaTrack const* track,
       unsigned numOfArrays = *ptr++; CHECK_PTR;
       for (unsigned j = 0; j < numOfArrays; ++j) {
 	++ptr; CHECK_PTR; // skip the 'array_completeness'|'reserved'|'NAL_unit_type' byte
-	    
+
 	unsigned numNalus = (*ptr++)<<8; CHECK_PTR;
 	numNalus |= *ptr++; CHECK_PTR;
-	    
+
 	for (i = 0; i < numNalus; ++i) {
 	  unsigned nalUnitLength = (*ptr++)<<8; CHECK_PTR;
 	  nalUnitLength |= *ptr++; CHECK_PTR;
-	      
+
 	  if (nalUnitLength > NUM_BYTES_REMAINING) break;
 	  u_int8_t nal_unit_type = (ptr[0]&0x7E)>>1;
 	  if (nal_unit_type == 32) { // VPS
@@ -427,11 +427,11 @@ void MatroskaFile
     u_int8_t* p = track->codecPrivate;
     unsigned n = track->codecPrivateSize;
     if (n == 0 || p == NULL) break; // we have no 'Codec Private' data
-    
+
     u_int8_t numHeaders;
     getPrivByte(numHeaders);
     unsigned headerSize[3]; // we don't handle any more than 2+1 headers
-    
+
     // Extract the sizes of each of these headers:
     unsigned sizesSum = 0;
     Boolean success = True;
@@ -439,39 +439,39 @@ void MatroskaFile
     for (i = 0; i < numHeaders && i < 3; ++i) {
       unsigned len = 0;
       u_int8_t c;
-      
+
       do {
 	success = False;
 	getPrivByte(c);
 	success = True;
-	
+
 	len += c;
       } while (c == 255);
       if (!success || len == 0) break;
-      
+
       headerSize[i] = len;
       sizesSum += len;
     }
     if (!success) break;
-    
+
     // Compute the implicit size of the final header:
     if (numHeaders < 3) {
       int finalHeaderSize = n - sizesSum;
       if (finalHeaderSize <= 0) break; // error in data; give up
-      
+
       headerSize[numHeaders] = (unsigned)finalHeaderSize;
       ++numHeaders; // include the final header now
     } else {
       numHeaders = 3; // The maximum number of headers that we handle
     }
-    
+
     // Then, extract and classify each header:
     for (i = 0; i < numHeaders; ++i) {
       success = False;
       unsigned newHeaderSize = headerSize[i];
       u_int8_t* newHeader = new u_int8_t[newHeaderSize];
       if (newHeader == NULL) break;
-      
+
       u_int8_t* hdr = newHeader;
       while (newHeaderSize-- > 0) {
 	success = False;
@@ -482,7 +482,7 @@ void MatroskaFile
 	delete[] newHeader;
 	break;
       }
-      
+
       u_int8_t headerType = newHeader[0];
       if (headerType == 1 || (isTheora && headerType == 0x80)) { // "identification" header
 	delete[] identificationHeader; identificationHeader = newHeader;
@@ -636,7 +636,7 @@ RTPSink* MatroskaFile
       }
       delete[] identificationHeader; delete[] commentHeader; delete[] setupHeader;
     } else if (strcmp(track->mimeType, "video/RAW") == 0) {
-      result = RawVideoRTPSink::createNew(envir(), rtpGroupsock, rtpPayloadTypeIfDynamic, 
+      result = RawVideoRTPSink::createNew(envir(), rtpGroupsock, rtpPayloadTypeIfDynamic,
                                           track->pixelHeight, track->pixelWidth, track->bitDepth, track->colorSampling, track->colorimetry);
     } else if (strcmp(track->mimeType, "video/H264") == 0) {
       u_int8_t* sps; unsigned spsSize;
@@ -787,16 +787,16 @@ MatroskaTrackTable::~MatroskaTrackTable() {
     delete track;
   }
   delete fTable;
-} 
+}
 
 void MatroskaTrackTable::add(MatroskaTrack* newTrack, unsigned trackNumber) {
-  if (newTrack != NULL && newTrack->trackNumber != 0) fTable->Remove((char const*)newTrack->trackNumber);
-  MatroskaTrack* existingTrack = (MatroskaTrack*)fTable->Add((char const*)trackNumber, newTrack);
+  if (newTrack != NULL && newTrack->trackNumber != 0) fTable->Remove(reinterpret_cast<char const*>(newTrack->trackNumber));
+  MatroskaTrack* existingTrack = (MatroskaTrack*)fTable->Add(reinterpret_cast<char const*>(trackNumber), newTrack);
   delete existingTrack; // in case it wasn't NULL
 }
 
 MatroskaTrack* MatroskaTrackTable::lookup(unsigned trackNumber) {
-  return (MatroskaTrack*)fTable->Lookup((char const*)trackNumber);
+  return (MatroskaTrack*)fTable->Lookup(reinterpret_cast<char const*>(trackNumber));
 }
 
 unsigned MatroskaTrackTable::numTracks() const { return fTable->numEntries(); }
@@ -884,16 +884,16 @@ FramedSource* MatroskaDemux::newDemuxedTrackByTrackNumber(unsigned trackNumber) 
   if (trackNumber == 0) return NULL;
 
   FramedSource* trackSource = new MatroskaDemuxedTrack(envir(), trackNumber, *this);
-  fDemuxedTracksTable->Add((char const*)trackNumber, trackSource);
+  fDemuxedTracksTable->Add(reinterpret_cast<char const*>(trackNumber), trackSource);
   return trackSource;
 }
 
 MatroskaDemuxedTrack* MatroskaDemux::lookupDemuxedTrack(unsigned trackNumber) {
-  return (MatroskaDemuxedTrack*)fDemuxedTracksTable->Lookup((char const*)trackNumber);
+  return (MatroskaDemuxedTrack*)fDemuxedTracksTable->Lookup(reinterpret_cast<char const*>(trackNumber));
 }
 
 void MatroskaDemux::removeTrack(unsigned trackNumber) {
-  fDemuxedTracksTable->Remove((char const*)trackNumber);
+  fDemuxedTracksTable->Remove(reinterpret_cast<char const*>(trackNumber));
   if (fDemuxedTracksTable->numEntries() == 0) {
     // We no longer have any demuxed tracks, so delete ourselves now:
     Medium::close(this);
@@ -901,7 +901,7 @@ void MatroskaDemux::removeTrack(unsigned trackNumber) {
 }
 
 void MatroskaDemux::continueReading() {
-  fOurParser->continueParsing();  
+  fOurParser->continueParsing();
 }
 
 void MatroskaDemux::seekToTime(double& seekNPT) {

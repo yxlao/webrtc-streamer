@@ -111,7 +111,7 @@ Boolean OggFileParser::parseStartOfFile() {
   do {
     header_type_flag = parseInitialPage();
   } while ((header_type_flag&0x02) != 0 || needHeaders());
-  
+
 #ifdef DEBUG
   fprintf(stderr, "Finished parsing start of file\n");
 #endif
@@ -357,7 +357,7 @@ static Boolean parseVorbisSetup_codebook(LEBitVector& bv) {
 #ifdef DEBUG_SETUP_HEADER
       fprintf(stderr, "\t\t\t\tcodeword length[%d]:\t%d\n", i, codewordLength);
 #else
-      codewordLength = codewordLength; // to prevent compiler warning
+      codewordLength = codewordLength + 0; // to prevent compiler warning
 #endif
     }
   } else { // ordered
@@ -646,7 +646,7 @@ static Boolean validateCommentHeader(u_int8_t const *p, unsigned headerSize,
     fprintf(stderr, "\"comment\" header is too short (%d bytes)\n", headerSize);
     return False;
   }
-      
+
 #ifdef DEBUG
   u_int8_t const* pEnd = &p[headerSize];
   p += 7+isOpus;
@@ -655,7 +655,7 @@ static Boolean validateCommentHeader(u_int8_t const *p, unsigned headerSize,
   fprintf(stderr, "\tvendor_string:");
   printComment(p, vendor_length);
   fprintf(stderr, "\n");
-  
+
   u_int32_t user_comment_list_length = (p[3]<<24)|(p[2]<<16)|(p[1]<<8)|p[0]; p += 4;
   for (unsigned i = 0; i < user_comment_list_length; ++i) {
     CHECK_PTR; u_int32_t length = (p[3]<<24)|(p[2]<<16)|(p[1]<<8)|p[0]; p += 4;
@@ -677,7 +677,7 @@ static unsigned blocksizeFromExponent(unsigned exponent) {
 Boolean OggFileParser::validateHeader(OggTrack* track, u_int8_t const* p, unsigned headerSize) {
   // Assert: headerSize >= 7 (because we've already checked "<packet_type>XXXXXX" or "OpusXXXX")
   if (strcmp(track->mimeType, "audio/VORBIS") == 0) {
-    u_int8_t const firstByte = p[0]; 
+    u_int8_t const firstByte = p[0];
 
     if (firstByte == 1) { // "identification" header
       if (headerSize < 30) {
@@ -687,41 +687,41 @@ Boolean OggFileParser::validateHeader(OggTrack* track, u_int8_t const* p, unsign
 	fprintf(stderr, "Vorbis \"identification\" header: 'framing_flag' is not set\n");
 	return False;
       }
-      
+
       p += 7;
       u_int32_t vorbis_version = (p[3]<<24)|(p[2]<<16)|(p[1]<<8)|p[0]; p += 4;
       if (vorbis_version != 0) {
 	fprintf(stderr, "Vorbis \"identification\" header has a bad 'vorbis_version': 0x%08x\n", vorbis_version);
 	return False;
       }
-      
+
       u_int8_t audio_channels = *p++;
       if (audio_channels == 0) {
 	fprintf(stderr, "Vorbis \"identification\" header: 'audio_channels' is 0!\n");
 	return False;
       }
       track->numChannels = audio_channels;
-      
+
       u_int32_t audio_sample_rate = (p[3]<<24)|(p[2]<<16)|(p[1]<<8)|p[0]; p += 4;
       if (audio_sample_rate == 0) {
 	fprintf(stderr, "Vorbis \"identification\" header: 'audio_sample_rate' is 0!\n");
 	return False;
       }
       track->samplingFrequency = audio_sample_rate;
-      
+
       p += 4; // skip over 'bitrate_maximum'
       u_int32_t bitrate_nominal = (p[3]<<24)|(p[2]<<16)|(p[1]<<8)|p[0]; p += 4;
       if (bitrate_nominal > 0) track->estBitrate = (bitrate_nominal+500)/1000; // round
-      
+
       p += 4; // skip over 'bitrate_maximum'
-      
+
       // Note the two 'block sizes' (samples per packet), and their durations in microseconds:
       u_int8_t blocksizeBits = *p++;
       unsigned& blocksize_0 = track->vtoHdrs.blocksize[0]; // alias
       unsigned& blocksize_1 = track->vtoHdrs.blocksize[1]; // alias
       blocksize_0 = blocksizeFromExponent(blocksizeBits&0x0F);
       blocksize_1 = blocksizeFromExponent(blocksizeBits>>4);
-      
+
       double uSecsPerSample = 1000000.0/(track->samplingFrequency*2);
           // Why the "2"?  I don't know, but it seems to be necessary
       track->vtoHdrs.uSecsPerPacket[0] = (unsigned)(uSecsPerSample*blocksize_0);
@@ -751,7 +751,7 @@ Boolean OggFileParser::validateHeader(OggTrack* track, u_int8_t const* p, unsign
       }
     }
   } else if (strcmp(track->mimeType, "video/THEORA") == 0) {
-    u_int8_t const firstByte = p[0]; 
+    u_int8_t const firstByte = p[0];
 
     if (firstByte == 0x80) { // "identification" header
       if (headerSize < 42) {
@@ -789,7 +789,7 @@ Boolean OggFileParser::validateHeader(OggTrack* track, u_int8_t const* p, unsign
       if (!validateCommentHeader(p, headerSize, 1/*isOpus*/)) return False;
     }
   }
-  
+
   return True;
 }
 
@@ -933,7 +933,7 @@ Boolean OggFileParser::deliverPacketWithinPage() {
   demuxedTrack->nextPresentationTime().tv_usec += durationInMicroseconds;
   while (demuxedTrack->nextPresentationTime().tv_usec >= 1000000) {
     ++demuxedTrack->nextPresentationTime().tv_sec;
-    demuxedTrack->nextPresentationTime().tv_usec -= 1000000;    
+    demuxedTrack->nextPresentationTime().tv_usec -= 1000000;
   }
   saveParserState();
 
@@ -944,7 +944,7 @@ Boolean OggFileParser::deliverPacketWithinPage() {
     fCurrentParseState = PARSING_AND_DELIVERING_PAGES;
     return False;
   }
- 
+
   if (packetNum < fPacketSizeTable->numCompletedPackets-1
       || fPacketSizeTable->lastPacketIsIncomplete) {
     // There is at least one more packet (possibly incomplete) left in this packet.
@@ -954,7 +954,7 @@ Boolean OggFileParser::deliverPacketWithinPage() {
     // Start parsing a new page next:
     fCurrentParseState = PARSING_AND_DELIVERING_PAGES;
   }
-  
+
   FramedSource::afterGetting(demuxedTrack); // completes delivery
   return True;
 }
@@ -984,7 +984,7 @@ void OggFileParser::parseStartOfPage(u_int8_t& header_type_flag,
   if (header_type_flag&0x02) fprintf(stderr, "bos ");
   if (header_type_flag&0x04) fprintf(stderr, "eos ");
   fprintf(stderr, ")\n");
-#endif  
+#endif
 
   u_int32_t granule_position1 = byteSwap(get4Bytes());
   u_int32_t granule_position2 = byteSwap(get4Bytes());
@@ -1001,8 +1001,8 @@ void OggFileParser::parseStartOfPage(u_int8_t& header_type_flag,
   DUMMY_STATEMENT(granule_position2);
   DUMMY_STATEMENT(page_sequence_number);
   DUMMY_STATEMENT(CRC_checksum);
-#endif  
-  
+#endif
+
   // Look at the "segment_table" to count the sizes of the packets in this page:
   delete fPacketSizeTable/*if any*/; fPacketSizeTable = new PacketSizeTable(number_page_segments);
   u_int8_t lacing_value = 0;

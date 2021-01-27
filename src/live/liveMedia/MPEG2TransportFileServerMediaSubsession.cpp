@@ -182,7 +182,8 @@ FramedSource* MPEG2TransportFileServerMediaSubsession
     ClientTrickPlayState* client = lookupClient(clientSessionId);
     if (client == NULL) {
       client = newClientTrickPlayState();
-      fClientSessionHashTable->Add((char const*)clientSessionId, client);
+      fClientSessionHashTable->Add(
+              reinterpret_cast<char const*>(clientSessionId), client);
     }
     client->setSource(framer);
   }
@@ -216,7 +217,8 @@ float MPEG2TransportFileServerMediaSubsession::duration() const {
 
 ClientTrickPlayState* MPEG2TransportFileServerMediaSubsession
 ::lookupClient(unsigned clientSessionId) {
-  return (ClientTrickPlayState*)(fClientSessionHashTable->Lookup((char const*)clientSessionId));
+    return (ClientTrickPlayState*)(fClientSessionHashTable->Lookup(
+            reinterpret_cast<char const*>(clientSessionId)));
 }
 
 
@@ -263,14 +265,14 @@ unsigned long ClientTrickPlayState::updateStateFromNPT(double npt, double stream
       if (fNextScale == 1.0f) {
 	// We'll be streaming from the original file.
 	// Use the index file to figure out how many Transport Packets we get to stream:
-	unsigned long toTSRecordNum, toIxRecordNum;    
+	unsigned long toTSRecordNum, toIxRecordNum;
 	float toNPT = (float)(fNPT + streamDuration);
 	fIndexFile->lookupTSPacketNumFromNPT(toNPT, toTSRecordNum, toIxRecordNum);
 	if (toTSRecordNum > tsRecordNum) { // sanity check
 	  numTSRecordsToStream = toTSRecordNum - tsRecordNum;
 	}
       } else {
-	// We'll be streaming from the trick play stream.  
+	// We'll be streaming from the trick play stream.
 	// It'd be difficult to figure out how many Transport Packets we need to stream, so instead set a PCR
 	// limit in the trick play stream.  (We rely upon the fact that PCRs in the trick play stream start at 0.0)
 	int direction = fNextScale < 0.0 ? -1 : 1;

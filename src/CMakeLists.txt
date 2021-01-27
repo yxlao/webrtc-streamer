@@ -4,7 +4,7 @@ add_custom_target(copy_html_dir
 )
 
 file(GLOB WEBRTC_STREAMER_SRC *.cpp)
-file(GLOB LIVE_SRC
+file(GLOB WEBRTC_STREAMER_3RD_PARTY_SRC
     live/groupsock/*.c*
     live/liveMedia/*.c*
     live/UsageEnvironment/*.c*
@@ -16,7 +16,7 @@ file(GLOB LIVE_SRC
 
 add_executable(webrtc-streamer
     ${WEBRTC_STREAMER_SRC}
-    ${LIVE_SRC}                        # optional: live
+    ${WEBRTC_STREAMER_3RD_PARTY_SRC}   # optional: live(&555helper), civietweb
 )
 add_dependencies(webrtc-streamer
     ext_webrtc_all

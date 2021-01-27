@@ -38,6 +38,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include <VP8VideoRTPSink.hh>
 #include <VP9VideoRTPSink.hh>
 #include <VorbisAudioRTPSink.hh>
+#include <string>
 
 #include "MatroskaDemuxedTrack.hh"
 #include "MatroskaFileParser.hh"
@@ -852,14 +853,8 @@ FileSink* MatroskaFile::createFileSinkForTrackNumber(unsigned trackNumber,
             delete[] sps;
             delete[] pps;
 
-            char* sPropParameterSetsStr = new char
-                    [sps_base64 == NULL
-                             ? 0
-                             : strlen(sps_base64) + pps_base64 == NULL
-                                       ? 0
-                                       : strlen(pps_base64) +
-                                                 10 /*more than enough space*/];
-            sprintf(sPropParameterSetsStr, "%s,%s", sps_base64, pps_base64);
+            const char* sPropParameterSetsStr =
+                    (std::string(sps_base64) + std::string(sps_base64)).c_str();
             delete[] sps_base64;
             delete[] pps_base64;
 
@@ -867,7 +862,6 @@ FileSink* MatroskaFile::createFileSinkForTrackNumber(unsigned trackNumber,
                     envir(), fileName, sPropParameterSetsStr,
                     MAX_KEY_FRAME_SIZE);  // extra large buffer size for large
                                           // key frames
-            delete[] sPropParameterSetsStr;
         } else if (strcmp(track->mimeType, "video/H265") == 0) {
             u_int8_t* vps;
             unsigned vpsSize;

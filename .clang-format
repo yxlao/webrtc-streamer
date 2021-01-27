@@ -6,4 +6,4 @@ Standard: c++14
 ContinuationIndentWidth: 8
 AccessModifierOffset: -4
 BinPackParameters: false
-SortIncludes: false
+SortIncludes: true

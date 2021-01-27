@@ -21,7 +21,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "StreamReplicator.hh"
 
 ////////// Definition of "StreamReplica": The class that implements each stream
-///replica //////////
+/// replica //////////
 
 class StreamReplica : public FramedSource {
 protected:

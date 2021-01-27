@@ -1057,7 +1057,7 @@ void ProxyServerMediaSubsession::subsessionByeHandler() {
 }
 
 ////////// PresentationTimeSessionNormalizer and
-///PresentationTimeSubsessionNormalizer implementations //////////
+/// PresentationTimeSubsessionNormalizer implementations //////////
 
 // PresentationTimeSessionNormalizer:
 

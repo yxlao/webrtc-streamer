@@ -57,9 +57,10 @@ struct DVVideoProfile {
     unsigned sType;
     unsigned sequenceCount;
     unsigned channelCount;
-    unsigned dvFrameSize;  // in bytes (==
-                           // sequenceCount*channelCount*(DV_NUM_BLOCKS_PER_SEQUENCE*DV_DIF_BLOCK_SIZE
-                           // i.e. 12000))
+    unsigned
+            dvFrameSize;  // in bytes (==
+                          // sequenceCount*channelCount*(DV_NUM_BLOCKS_PER_SEQUENCE*DV_DIF_BLOCK_SIZE
+                          // i.e. 12000))
     double frameDuration;  // duration of the above, in microseconds.
                            // (1000000/this == frame rate)
 };

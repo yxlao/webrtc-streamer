@@ -2082,17 +2082,19 @@ void RTSPClient::handleResponseBytes(int newBytesRead) {
                                           transportParamsStr)) {
                 } else if (checkForHeader(lineStart, "Scale:", 6,
                                           scaleParamsStr)) {
-                } else if (checkForHeader(lineStart, "Speed:",
-                                          // NOTE: Should you feel the need to
-                                          // modify this code,
-                                          6,
-                                          // please first email the "live-devel"
-                                          // mailing list
-                                          speedParamsStr
-                                          // (see
-                                          // http://live555.com/liveMedia/faq.html#mailing-list-address
-                                          // for details),
-                                          )) {
+                } else if (
+                        checkForHeader(
+                                lineStart, "Speed:",
+                                // NOTE: Should you feel the need to
+                                // modify this code,
+                                6,
+                                // please first email the "live-devel"
+                                // mailing list
+                                speedParamsStr
+                                // (see
+                                // http://live555.com/liveMedia/faq.html#mailing-list-address
+                                // for details),
+                                )) {
                     // to check whether your proposed modification is
                     // appropriate/correct,
                 } else if (checkForHeader(

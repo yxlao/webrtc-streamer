@@ -783,8 +783,8 @@ MediaSubsession::MediaSubsession(MediaSession& parent)
                                              // assumed to be a decimal string,
                                              // not a hexadecimal string.  NEED
                                              // TO FIX #####
-    setAttribute("profile-id", "1");  // used with "video/H265"
-    setAttribute("level-id", "93");   // used with "video/H265"
+    setAttribute("profile-id", "1");         // used with "video/H265"
+    setAttribute("level-id", "93");          // used with "video/H265"
     setAttribute("interop-constraints",
                  "B00000000000");     // used with "video/H265"
     setAttribute("sampling", "RGB");  // used with "video/JPEG2000"

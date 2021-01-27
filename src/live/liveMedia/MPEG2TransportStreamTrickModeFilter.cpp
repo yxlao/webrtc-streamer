@@ -168,7 +168,7 @@ void MPEG2TransportStreamTrickModeFilter::doGetNextFrame() {
                             // use this frame's (not the saved frame's) PCR
                             fNextIndexRecordNum = fSavedFrameIndexRecordStart;
                             //	    fprintf(stderr, "\tbeginning delivery of
-                            //saved frame\n");//#####
+                            // saved frame\n");//#####
                         }
                     } else {
                         // No frame is needed now:
@@ -187,7 +187,7 @@ void MPEG2TransportStreamTrickModeFilter::doGetNextFrame() {
                         // use this frame's (not the saved frame's) PCR
                         fNextIndexRecordNum = fSavedFrameIndexRecordStart;
                         //	  fprintf(stderr, "\tbeginning delivery of saved
-                        //frame\n");//#####
+                        // frame\n");//#####
                     } else {
                         // No frame is needed now:
                         fState = SKIPPING_FRAME;
@@ -210,7 +210,7 @@ void MPEG2TransportStreamTrickModeFilter::doGetNextFrame() {
                      fNextIndexRecordNum - 1 != fSavedFrameIndexRecordStart) ||
                     isNonIFrameStart(recordType)) {
                     //	fprintf(stderr, "\tended delivery of saved
-                    //frame\n");//#####
+                    // frame\n");//#####
                     // We've reached the end of the saved frame, so revert to
                     // the original sequence of index records:
                     fNextIndexRecordNum = fSavedSequentialIndexRecordNum;

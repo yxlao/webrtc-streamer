@@ -160,7 +160,7 @@ Boolean RawVideoRTPSource ::processSpecialHeader(
 char const* RawVideoRTPSource::MIMEtype() const { return "video/RAW"; }
 
 ////////// RawVideoBufferedPacket and RawVideoBufferedPacketFactory
-///implementation //////////
+/// implementation //////////
 
 RawVideoBufferedPacket ::RawVideoBufferedPacket(RawVideoRTPSource* ourSource)
     : fOurSource(ourSource) {}
